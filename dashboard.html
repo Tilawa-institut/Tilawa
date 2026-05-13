@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TILAWA — Espace apprenant</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'DM Sans',sans-serif;background:#EEF2F9;color:#0D1B3E;-webkit-font-smoothing:antialiased;overflow:hidden}
+button{cursor:pointer;font-family:'DM Sans',sans-serif;border:none;background:none}
+input{font-family:'DM Sans',sans-serif;outline:none}
+
+/* ═══════════════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════════════ */
+:root{
+  --ink:       #0D1B3E;
+  --cobalt:    #1A4FAF;
+  --mid:       #2D7DD2;
+  --cyan:      #3AB5E5;
+  --pale:      #EBF4FD;
+  --muted:     #64748B;
+  --border:    #E2EAF6;
+  --surface:   #F8FAFD;
+  --green:     #16A34A;
+  --green-bg:  #F0FDF4;
+  --green-b:   #BBF7D0;
+  --gold:      #C8A84B;
+  --gold-bg:   #FDF8EC;
+  --red:       #DC2626;
+  --red-bg:    #FEF2F2;
+  --grad:      linear-gradient(135deg,#1A4FAF,#3AB5E5);
+  --grad-d:    linear-gradient(150deg,#0D1B3E 0%,#1A4FAF 55%,#2470C8 100%);
+  --sw:        240px;
+  --th:        64px;
+  --r:         10px;
+  --r-lg:      16px;
+  --r-xl:      22px;
+  --shadow:    0 2px 12px rgba(13,27,62,.07);
+  --shadow-md: 0 8px 28px rgba(13,27,62,.11);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ÉCRAN DE CONNEXION
+═══════════════════════════════════════════════════════ */
+#loginScreen{
+  position:fixed;inset:0;z-index:200;
+  background:var(--grad-d);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+#loginScreen.off{display:none}
+
+.login-card{
+  background:#fff;border-radius:var(--r-xl);
+  padding:38px 40px;width:100%;max-width:400px;
+  box-shadow:0 28px 64px rgba(0,0,0,.28);
+  animation:popIn .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes popIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+
+.lc-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:26px}
+.lc-wordmark{font-size:1.2rem;font-weight:700;letter-spacing:.16em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lc-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--ink);text-align:center;margin-bottom:5px}
+.lc-sub{font-size:.8rem;color:var(--muted);text-align:center;margin-bottom:24px}
+
+.lc-err{
+  display:none;background:var(--red-bg);border:1px solid #FECACA;
+  border-radius:var(--r);padding:10px 14px;
+  font-size:.8rem;color:var(--red);margin-bottom:14px;
+}
+.lc-err.on{display:block}
+
+.fg{margin-bottom:14px}
+.fg label{font-size:.78rem;font-weight:600;color:var(--ink);display:block;margin-bottom:5px}
+.fg input{
+  width:100%;padding:10px 14px;
+  border:1.5px solid var(--border);border-radius:var(--r);
+  font-size:.88rem;color:var(--ink);transition:border-color .15s;
+}
+.fg input:focus{border-color:var(--cobalt)}
+
+.lc-btn{
+  width:100%;padding:12px;border-radius:var(--r);
+  background:var(--grad);color:#fff;font-size:.92rem;font-weight:600;
+  margin-top:6px;transition:all .2s;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.lc-btn:hover{opacity:.9;transform:translateY(-1px)}
+.lc-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.lc-footer{font-size:.72rem;color:var(--muted);text-align:center;margin-top:16px}
+.lc-footer a{color:var(--cobalt)}
+
+/* ═══════════════════════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════════════════════ */
+#app{display:none;height:100vh;overflow:hidden}
+#app.on{display:flex}
+
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════ */
+.sb{
+  width:var(--sw);flex-shrink:0;
+  background:#fff;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;height:100vh;overflow-y:auto;
+}
+.sb-logo{
+  padding:20px 20px 16px;display:flex;align-items:center;gap:9px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.sb-wm{font-size:.98rem;font-weight:700;letter-spacing:.15em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sb-sub{font-size:.58rem;color:var(--muted);margin-top:-1px}
+
+.sb-section{padding:16px 12px 4px}
+.sb-lbl{font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 8px;margin-bottom:4px;display:block}
+
+.ni{
+  display:flex;align-items:center;gap:9px;padding:8px 10px;
+  border-radius:var(--r);font-size:.82rem;color:var(--muted);
+  cursor:pointer;transition:all .15s;margin-bottom:2px;
+}
+.ni:hover{background:var(--surface);color:var(--cobalt)}
+.ni.on{background:var(--pale);color:var(--cobalt);font-weight:500}
+.ni-icon{
+  width:30px;height:30px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;background:var(--surface);transition:all .15s;
+}
+.ni.on .ni-icon{background:var(--cobalt)}
+.ni-badge{
+  margin-left:auto;background:var(--cobalt);color:#fff;
+  font-size:.6rem;font-weight:700;padding:2px 6px;border-radius:10px;
+}
+
+.sb-next{margin:10px;padding:13px 14px;background:var(--pale);border-radius:var(--r-lg);flex-shrink:0}
+.sn-lbl{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cobalt);margin-bottom:6px}
+.sn-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:2px;line-height:1.35}
+.sn-time{font-size:.72rem;color:var(--muted);margin-bottom:9px}
+.sn-btn{
+  display:inline-flex;align-items:center;gap:5px;font-size:.7rem;
+  font-weight:600;color:var(--cobalt);background:#fff;
+  padding:5px 11px;border-radius:7px;cursor:pointer;
+}
+
+.sb-profile{
+  margin-top:auto;padding:14px 12px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.sp-av{
+  width:34px;height:34px;border-radius:50%;background:var(--grad);
+  color:#fff;font-size:.75rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sp-name{font-size:.82rem;font-weight:600;color:var(--ink)}
+.sp-level{font-size:.68rem;color:var(--muted);margin-top:1px}
+.sp-out{
+  margin-left:auto;font-size:12px;color:var(--muted);
+  padding:4px 7px;border-radius:6px;transition:all .15s;cursor:pointer;
+}
+.sp-out:hover{background:var(--red-bg);color:var(--red)}
+
+/* ═══════════════════════════════════════════════════════
+   MAIN
+═══════════════════════════════════════════════════════ */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+.topbar{
+  height:var(--th);background:#fff;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 26px;flex-shrink:0;
+}
+.tb-title{font-family:'Playfair Display',serif;font-size:1.08rem;font-weight:700;color:var(--ink)}
+.tb-right{display:flex;align-items:center;gap:12px}
+.tb-sess{
+  display:flex;align-items:center;gap:6px;
+  background:var(--green-bg);border:1px solid var(--green-b);
+  border-radius:20px;padding:5px 12px;font-size:.7rem;font-weight:600;color:var(--green);
+}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-av{
+  width:34px;height:34px;border-radius:50%;background:var(--grad);
+  color:#fff;font-size:.72rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+
+.content{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:0}
+
+/* ═══════════════════════════════════════════════════════
+   VUES
+═══════════════════════════════════════════════════════ */
+.view{display:none;flex-direction:column;gap:18px;animation:fu .28s ease both}
+.view.on{display:flex}
+@keyframes fu{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══════════════════════════════════════════════════════
+   COMPOSANTS
+═══════════════════════════════════════════════════════ */
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.eyebrow{font-size:.63rem;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--cobalt);display:block;margin-bottom:5px}
+.pbar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.pbar-f{height:100%;background:var(--grad);border-radius:3px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:10px;font-size:.67rem;font-weight:600}
+.btn-p{
+  display:inline-flex;align-items:center;gap:6px;padding:10px 18px;
+  border-radius:var(--r);background:var(--grad);color:#fff;
+  font-size:.82rem;font-weight:600;border:none;cursor:pointer;
+  box-shadow:0 3px 12px rgba(26,79,175,.25);transition:all .2s;
+}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(26,79,175,.35)}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;padding:9px 16px;
+  border-radius:var(--r);border:1.5px solid var(--cobalt);
+  color:var(--cobalt);font-size:.82rem;font-weight:500;cursor:pointer;background:#fff;transition:all .15s;
+}
+.btn-o:hover{background:var(--pale)}
+
+/* ═══════════════════════════════════════════════════════
+   SKELETON
+═══════════════════════════════════════════════════════ */
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+.sk{
+  background:linear-gradient(90deg,#E2EAF6 25%,#F0F4FA 50%,#E2EAF6 75%);
+  background-size:400px 100%;animation:shimmer 1.3s ease infinite;border-radius:6px;
+}
+.sk-line{height:13px;margin-bottom:7px}
+.sk-lg{height:20px}
+.sk-block{height:72px;border-radius:var(--r-lg)}
+
+/* ═══════════════════════════════════════════════════════
+   VUE DASHBOARD — HERO
+═══════════════════════════════════════════════════════ */
+.hero{
+  background:var(--grad-d);border-radius:var(--r-xl);
+  padding:26px 30px;position:relative;overflow:hidden;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+}
+.hero::before{
+  content:'تِلَاوَة';
+  position:absolute;right:-6px;top:50%;transform:translateY(-50%);
+  font-family:'Playfair Display',serif;font-size:110px;
+  color:rgba(255,255,255,.05);line-height:1;pointer-events:none;
+}
+.h-tag{font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:5px}
+.h-title{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:#fff;line-height:1.18;margin-bottom:6px}
+.h-sub{font-size:.82rem;color:rgba(255,255,255,.57);line-height:1.65;max-width:380px}
+.h-btns{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.btn-hw{
+  background:#fff;color:var(--cobalt);padding:9px 18px;border-radius:var(--r);
+  font-size:.82rem;font-weight:600;cursor:pointer;border:none;
+  box-shadow:0 3px 12px rgba(0,0,0,.13);transition:all .2s;
+}
+.btn-hw:hover{transform:translateY(-1px)}
+.btn-hg{
+  background:rgba(255,255,255,.12);color:#fff;
+  border:1px solid rgba(255,255,255,.26);padding:9px 18px;
+  border-radius:var(--r);font-size:.82rem;cursor:pointer;transition:all .2s;
+}
+.btn-hg:hover{background:rgba(255,255,255,.2)}
+
+/* ═══════════════════════════════════════════════════════
+   VUE DASHBOARD — KPIs
+═══════════════════════════════════════════════════════ */
+.kpi{padding:16px 18px}
+.kpi-ic{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:10px}
+.kpi-n{font-size:1.5rem;font-weight:700;color:var(--ink);line-height:1;margin-bottom:2px}
+.kpi-l{font-size:.72rem;color:var(--muted)}
+.kpi-s{font-size:.67rem;margin-top:4px;color:var(--green)}
+
+/* ═══════════════════════════════════════════════════════
+   VUE DASHBOARD — COURS EN COURS
+═══════════════════════════════════════════════════════ */
+.cc{padding:20px 22px}
+.cc-head{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.cc-ic{
+  width:48px;height:48px;border-radius:11px;background:var(--grad);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:19px;
+  color:rgba(255,255,255,.3);flex-shrink:0;
+}
+.cc-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.3}
+.cc-meta{font-size:.72rem;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+.pr-row{display:flex;justify-content:space-between;font-size:.74rem;margin-bottom:6px}
+.pr-pct{font-weight:600;color:var(--cobalt)}
+
+.lessons{display:flex;flex-direction:column;margin-top:13px}
+.ls-row{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 6px;border-bottom:1px solid var(--border);
+  border-radius:6px;transition:background .15s;
+}
+.ls-row:last-child{border-bottom:none}
+.ls-row:hover{background:var(--surface)}
+.ls-row.done .ls-name{color:var(--muted)}
+.ls-row.cur{background:var(--pale);padding-left:10px}
+.ls-row.cur .ls-name{font-weight:600;color:var(--cobalt)}
+.ls-dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.ls-done{background:var(--green-bg);color:var(--green)}
+.ls-cur{background:var(--cobalt);color:#fff}
+.ls-next{background:var(--surface);border:1.5px solid var(--border)}
+.ls-num{font-size:.68rem;font-weight:600;color:var(--muted);width:20px;flex-shrink:0}
+.ls-name{font-size:.82rem;color:var(--ink);flex:1;line-height:1.35}
+.ls-dur{font-size:.68rem;color:var(--muted)}
+
+/* ═══════════════════════════════════════════════════════
+   VUE DASHBOARD — SÉANCES & ANNONCE
+═══════════════════════════════════════════════════════ */
+.sp{padding:20px 22px}
+.se-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.se-row:last-child{border-bottom:none}
+.se-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.se-day{font-size:.78rem;font-weight:500;color:var(--ink);width:74px;flex-shrink:0}
+.se-info{font-size:.78rem;color:var(--muted);flex:1}
+.se-tag{font-size:.64rem;font-weight:600;padding:2px 8px;border-radius:8px}
+
+.ann{background:var(--gold-bg);border:1px solid #F3DFA0;border-radius:var(--r-lg);padding:16px 18px;margin:0}
+.ann-lbl{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.ann-title{font-size:.88rem;font-weight:600;color:var(--ink);margin-bottom:5px}
+.ann-body{font-size:.78rem;color:#92761A;line-height:1.65}
+.ann-meta{font-size:.67rem;color:var(--gold);margin-top:7px}
+
+/* ═══════════════════════════════════════════════════════
+   VUE MES COURS
+═══════════════════════════════════════════════════════ */
+.cf{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.cf-btn{
+  padding:6px 14px;border-radius:18px;font-size:.76rem;font-weight:500;
+  color:var(--muted);border:1.5px solid var(--border);cursor:pointer;transition:all .15s;background:#fff;
+}
+.cf-btn:hover{border-color:var(--cobalt);color:var(--cobalt)}
+.cf-btn.on{background:var(--pale);border-color:var(--cobalt);color:var(--cobalt);font-weight:600}
+
+.fc{overflow:hidden;transition:transform .2s,box-shadow .2s}
+.fc:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.fc-thumb{height:90px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.fc-ar{font-family:'Playfair Display',serif;font-size:38px;color:rgba(255,255,255,.2)}
+.fc-level{position:absolute;top:10px;left:10px;font-size:.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.18);color:#fff;padding:3px 8px;border-radius:8px;border:1px solid rgba(255,255,255,.2)}
+.fc-status{position:absolute;top:10px;right:10px;font-size:.62rem;font-weight:600;padding:3px 9px;border-radius:8px;background:rgba(34,197,94,.15);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.fc-body{padding:17px}
+.fc-title{font-family:'Playfair Display',serif;font-size:1.02rem;font-weight:700;color:var(--ink);margin-bottom:7px;line-height:1.3;margin-top:7px}
+.fc-desc{font-size:.78rem;color:var(--muted);line-height:1.65;margin-bottom:12px}
+.fc-stats{display:flex;gap:14px;margin-bottom:11px}
+.fc-stat-v{font-size:.88rem;font-weight:600;color:var(--ink)}
+.fc-stat-k{font-size:.68rem;color:var(--muted);margin-top:1px}
+.fc-pr-row{display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:5px}
+.fc-cta{display:flex;gap:8px;margin-top:13px}
+
+/* ═══════════════════════════════════════════════════════
+   VUE PROGRESSION
+═══════════════════════════════════════════════════════ */
+.ring-wrap{position:relative;width:108px;height:108px;flex-shrink:0}
+.ring-wrap svg{width:108px;height:108px;transform:rotate(-90deg)}
+.r-track{fill:none;stroke:var(--border);stroke-width:8}
+.r-fill{fill:none;stroke:url(#rg);stroke-width:8;stroke-linecap:round;transition:stroke-dasharray .8s ease}
+.ring-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.ring-pct{font-size:1.2rem;font-weight:700;color:var(--cobalt);line-height:1}
+.ring-sub{font-size:.58rem;color:var(--muted)}
+
+.mod-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border)}
+.mod-row:last-child{border-bottom:none}
+.mod-ic{width:33px;height:33px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.mod-name{font-size:.82rem;font-weight:500;color:var(--ink);margin-bottom:4px}
+.mod-pct{font-size:.7rem;color:var(--cobalt);font-weight:600;width:30px;text-align:right;flex-shrink:0}
+
+.bilan-item{padding:12px 14px;background:var(--surface);border-radius:var(--r);margin-bottom:9px;border-left:3px solid var(--cobalt)}
+.bi-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.bi-form{font-size:.82rem;font-weight:600;color:var(--ink)}
+.bi-eval{font-size:.67rem;font-weight:600;padding:2px 8px;border-radius:8px;background:var(--pale);color:var(--cobalt)}
+.bi-note{font-size:.77rem;color:var(--muted);font-style:italic;line-height:1.6}
+.bi-date{font-size:.66rem;color:var(--muted);margin-top:5px}
+
+/* ═══════════════════════════════════════════════════════
+   VUE BADGES
+═══════════════════════════════════════════════════════ */
+.bg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.bg-card{
+  padding:16px 12px;text-align:center;background:#fff;
+  border:1px solid var(--border);border-radius:var(--r-lg);
+  transition:transform .2s,box-shadow .2s;
+}
+.bg-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.bg-card.locked{opacity:.4;filter:grayscale(.65)}
+.bg-ic{font-size:28px;margin-bottom:7px}
+.bg-name{font-size:.74rem;font-weight:600;color:var(--ink);margin-bottom:2px;line-height:1.3}
+.bg-desc{font-size:.67rem;color:var(--muted);line-height:1.4}
+.bg-date{font-size:.62rem;color:var(--cobalt);margin-top:4px;font-weight:500}
+
+/* ═══════════════════════════════════════════════════════
+   VIDE / ERREUR
+═══════════════════════════════════════════════════════ */
+.empty{text-align:center;padding:30px 20px;color:var(--muted);font-size:.83rem}
+.empty-ic{font-size:30px;margin-bottom:8px}
+
+/* ═══════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════ */
+.toast{
+  position:fixed;bottom:22px;right:22px;
+  background:var(--ink);color:#fff;
+  padding:11px 18px;border-radius:var(--r-lg);
+  font-size:.82rem;box-shadow:var(--shadow-md);z-index:500;
+  display:flex;align-items:center;gap:7px;
+  animation:tin .3s ease;
+}
+.toast.out{animation:tout .3s ease forwards}
+.toast.ok{background:var(--green)}
+.toast.err{background:var(--red)}
+@keyframes tin{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes tout{from{transform:translateY(0);opacity:1}to{transform:translateY(16px);opacity:0}}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .sb{display:none}
+  .g4{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .g2,.g4{grid-template-columns:1fr}
+  .content{padding:14px}
+  .hero{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     ÉCRAN DE CONNEXION
+═══════════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+
+    <div class="lc-logo">
+      <svg width="34" height="34" viewBox="0 0 36 36" fill="none">
+        <defs><linearGradient id="lg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#1A4FAF"/><stop offset="100%" stop-color="#3AB5E5"/>
+        </linearGradient></defs>
+        <path d="M6 25.5L18 18.5L30 25.5" stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M6 25.5L11 31L18 27.5L25 31L30 25.5" stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M18 7C18 7 10.5 10 8 15L8 25C11 20 18 17.5 18 17.5" stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M18 7C18 7 25.5 10 28 15L28 25C25 20 18 17.5 18 17.5" stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <line x1="18" y1="7" x2="18" y2="17.5" stroke="url(#lg)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span class="lc-wordmark">TILAWA</span>
+    </div>
+
+    <h2 class="lc-title">Connexion à votre espace</h2>
+    <p class="lc-sub">Entrez vos identifiants pour accéder à vos cours</p>
+
+    <div class="lc-err" id="loginErr"></div>
+
+    <div class="fg">
+      <label>Adresse email</label>
+      <input id="lEmail" type="email" placeholder="nadia@email.fr" autocomplete="email"/>
+    </div>
+    <div class="fg">
+      <label>Mot de passe</label>
+      <input id="lPass" type="password" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+
+    <button class="lc-btn" id="lBtn" onclick="login()">
+      <span id="lBtnTxt">Se connecter</span>
+    </button>
+
+    <p class="lc-footer">
+      Problème ? Contactez TILAWA sur
+      <a href="https://api.whatsapp.com/send?phone=33782335866" target="_blank">WhatsApp</a>
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     APP
+═══════════════════════════════════════════════════ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sb">
+    <div class="sb-logo">
+      <svg width="30" height="30" viewBox="0 0 36 36" fill="none">
+        <defs><linearGradient id="sg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#1A4FAF"/><stop offset="100%" stop-color="#3AB5E5"/>
+        </linearGradient></defs>
+        <path d="M6 25.5L18 18.5L30 25.5" stroke="url(#sg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M6 25.5L11 31L18 27.5L25 31L30 25.5" stroke="url(#sg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M18 7C18 7 10.5 10 8 15L8 25C11 20 18 17.5 18 17.5" stroke="url(#sg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M18 7C18 7 25.5 10 28 15L28 25C25 20 18 17.5 18 17.5" stroke="url(#sg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <line x1="18" y1="7" x2="18" y2="17.5" stroke="url(#sg)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div><div class="sb-wm">TILAWA</div><div class="sb-sub">Espace apprenant</div></div>
+    </div>
+
+    <div class="sb-section">
+      <span class="sb-lbl">Principal</span>
+      <div class="ni on" onclick="go('dashboard',this)"><div class="ni-icon">🏠</div>Tableau de bord</div>
+      <div class="ni"    onclick="go('cours',this)">    <div class="ni-icon">📚</div>Mes cours<span class="ni-badge" id="nbCours">–</span></div>
+      <div class="ni"    onclick="go('prog',this)">     <div class="ni-icon">📈</div>Progression</div>
+      <div class="ni"    onclick="go('badges',this)">   <div class="ni-icon">🏅</div>Mes badges<span class="ni-badge" id="nbBadges">–</span></div>
+    </div>
+
+    <div class="sb-next" id="sbNext">
+      <div class="sn-lbl">Prochain cours</div>
+      <div class="sk sk-line sn-title" style="width:80%"></div>
+      <div class="sk sk-line" style="width:55%;margin-top:4px;height:10px"></div>
+    </div>
+
+    <div class="sb-profile">
+      <div class="sp-av" id="sbAv">?</div>
+      <div>
+        <div class="sp-name" id="sbName">Chargement…</div>
+        <div class="sp-level" id="sbLevel">–</div>
+      </div>
+      <div class="sp-out" onclick="logout()" title="Se déconnecter">⏻</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="tb-title" id="tbTitle">Tableau de bord</div>
+      <div class="tb-right">
+        <div class="tb-sess"><div class="tb-dot"></div><span id="tbSess">Session en cours</span></div>
+        <div class="tb-av" id="tbAv">?</div>
+      </div>
+    </header>
+
+    <!-- CONTENU -->
+    <div class="content">
+
+      <!-- ── VUE DASHBOARD ── -->
+      <div class="view on" id="view-dashboard">
+
+        <!-- Hero -->
+        <div class="hero">
+          <div>
+            <div class="h-tag" id="hTag">Bienvenue</div>
+            <div class="h-title" id="hTitle">Chargement de vos données…</div>
+            <div class="h-sub" id="hSub"></div>
+            <div class="h-btns">
+              <button class="btn-hw" id="btnMeet" style="display:none">📹 Rejoindre le cours</button>
+              <button class="btn-hg" onclick="go('cours',document.querySelectorAll('.ni')[1])">Voir mes cours</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="g4">
+          <div class="card kpi"><div class="kpi-ic" style="background:#EBF4FD">📚</div><div class="kpi-n" id="kInsc">–</div><div class="kpi-l">Formations</div></div>
+          <div class="card kpi"><div class="kpi-ic" style="background:#F0FDF4">⏱</div><div class="kpi-n" id="kHours">–</div><div class="kpi-l">Heures suivies</div></div>
+          <div class="card kpi"><div class="kpi-ic" style="background:#FDF8EC">🏅</div><div class="kpi-n" id="kBadges">–</div><div class="kpi-l">Badges obtenus</div></div>
+          <div class="card kpi"><div class="kpi-ic" style="background:#FFF1F1">📊</div><div class="kpi-n" id="kPres">–</div><div class="kpi-l">Taux de présence</div></div>
+        </div>
+
+        <!-- Cours + Séances -->
+        <div class="g2">
+          <div class="card cc" id="ccCard"><div class="sk sk-block"></div><div class="sk sk-line" style="margin-top:12px"></div></div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="card sp" id="seCard"><div class="sk sk-block"></div></div>
+            <div id="annCard"><div class="sk sk-block" style="border-radius:var(--r-lg)"></div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── VUE MES COURS ── -->
+      <div class="view" id="view-cours">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+          <div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.25rem;margin-bottom:4px">Mes formations</h2>
+            <p style="font-size:.82rem;color:var(--muted)" id="coursSub">Chargement…</p>
+          </div>
+          <div class="cf">
+            <button class="cf-btn on" onclick="filterCours(this,'all')">Toutes</button>
+            <button class="cf-btn"    onclick="filterCours(this,'actif')">En cours</button>
+            <button class="cf-btn"    onclick="filterCours(this,'termine')">Terminées</button>
+          </div>
+        </div>
+        <div class="g2" id="coursGrid"><div class="card" style="padding:22px"><div class="sk sk-block"></div></div><div class="card" style="padding:22px"><div class="sk sk-block"></div></div></div>
+      </div>
+
+      <!-- ── VUE PROGRESSION ── -->
+      <div class="view" id="view-prog">
+        <div class="g2">
+          <div class="card" style="padding:22px" id="progCard"><div class="sk sk-block"></div></div>
+          <div class="card" style="padding:22px" id="bilanCard"><div class="sk sk-block"></div></div>
+        </div>
+      </div>
+
+      <!-- ── VUE BADGES ── -->
+      <div class="view" id="view-badges">
+        <div>
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.25rem;margin-bottom:4px">Mes badges</h2>
+          <p style="font-size:.82rem;color:var(--muted)" id="badgesSub">Chargement…</p>
+        </div>
+        <div class="bg-grid" id="bgGrid">
+          <div class="sk" style="height:125px;border-radius:var(--r-lg)"></div>
+          <div class="sk" style="height:125px;border-radius:var(--r-lg)"></div>
+          <div class="sk" style="height:125px;border-radius:var(--r-lg)"></div>
+          <div class="sk" style="height:125px;border-radius:var(--r-lg)"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ═══════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════ -->
+<script>
+/* ────────────────────────────────────────────────────
+   ⚙️  CONFIG SUPABASE
+   → Remplace les deux valeurs ci-dessous
+   → Supabase → Settings → API → Project URL + anon key
+──────────────────────────────────────────────────── */
+const SB_URL = 'https://XXXXXXXX.supabase.co';   // ← REMPLACE
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6...'; // ← REMPLACE
+
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+/* ────────────────────────────────────────────────────
+   AUTH
+──────────────────────────────────────────────────── */
+sb.auth.onAuthStateChange(async (event, session) => {
+  if (session?.user) {
+    document.getElementById('loginScreen').classList.add('off');
+    document.getElementById('app').classList.add('on');
+    await loadData(session.user.id);
+  } else {
+    document.getElementById('loginScreen').classList.remove('off');
+    document.getElementById('app').classList.remove('on');
+  }
+});
+
+async function login() {
+  const email = document.getElementById('lEmail').value.trim();
+  const pass  = document.getElementById('lPass').value;
+  const errEl = document.getElementById('loginErr');
+  const btn   = document.getElementById('lBtn');
+  errEl.classList.remove('on');
+
+  if (!email || !pass) {
+    errEl.textContent = 'Veuillez remplir votre email et votre mot de passe.';
+    return errEl.classList.add('on');
+  }
+
+  btn.disabled = true;
+  document.getElementById('lBtnTxt').textContent = 'Connexion…';
+
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+
+  if (error) {
+    errEl.textContent = error.message.includes('Invalid') ? 'Email ou mot de passe incorrect.' : error.message;
+    errEl.classList.add('on');
+    btn.disabled = false;
+    document.getElementById('lBtnTxt').textContent = 'Se connecter';
+  }
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  toast('À bientôt !', 'ok');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('loginScreen').classList.contains('off')) login();
+});
+
+/* ────────────────────────────────────────────────────
+   CHARGEMENT DES DONNÉES
+──────────────────────────────────────────────────── */
+let D = {};
+
+async function loadData(uid) {
+  try {
+    /* Étape 1 — récupérer les groupe_ids de l'étudiant */
+    const { data: insc0 } = await sb.from('inscriptions').select('groupe_id').eq('etudiant_id', uid).eq('statut', 'actif');
+    const gids = (insc0 || []).map(i => i.groupe_id);
+
+    /* Étape 2 — toutes les requêtes en parallèle */
+    const [rProfil, rInsc, rProg, rBadgesUser, rBadgesAll, rSeances, rAnn, rSess] = await Promise.all([
+
+      sb.from('profils').select('*').eq('id', uid).single(),
+
+      sb.from('inscriptions').select(`
+        id, statut, paiement_statut, groupe_id,
+        groupes ( id, type, jour1, jour2, heure, lien_meet, max_etudiants,
+          formations ( titre, slug, categorie, niveau, duree_heures, prix_collectif, prix_individuel, description ),
+          sessions  ( nom, date_debut, date_fin, actif ) )
+      `).eq('etudiant_id', uid),
+
+      sb.from('progression').select(`
+        pourcentage, evaluation, note_bilan, mis_a_jour_le, inscription_id,
+        inscriptions ( groupe_id,
+          groupes ( formations ( titre, slug, categorie ), sessions ( nom, actif ) ) )
+      `).eq('etudiant_id', uid),
+
+      sb.from('badges_utilisateurs').select('obtenu_le, badges(slug,nom,icone,description)').eq('utilisateur_id', uid).order('obtenu_le', { ascending: false }),
+
+      sb.from('badges').select('*').order('id'),
+
+      gids.length
+        ? sb.from('seances').select(`
+            id, numero, date_seance, heure_debut, titre, statut, groupe_id,
+            groupes ( lien_meet, formations ( titre, categorie ) )
+          `).in('groupe_id', gids).order('date_seance')
+        : Promise.resolve({ data: [] }),
+
+      gids.length
+        ? sb.from('annonces').select('titre, contenu, publiee_le, profils(prenom,nom)').or(`groupe_id.is.null,groupe_id.in.(${gids.join(',')})`).order('publiee_le', { ascending: false }).limit(3)
+        : sb.from('annonces').select('titre, contenu, publiee_le, profils(prenom,nom)').is('groupe_id', null).order('publiee_le', { ascending: false }).limit(3),
+
+      sb.from('sessions').select('nom, date_debut, date_fin').eq('actif', true).single(),
+    ]);
+
+    D = {
+      profil:       rProfil.data,
+      inscriptions: rInsc.data       || [],
+      progression:  rProg.data       || [],
+      badgesUser:   rBadgesUser.data || [],
+      badgesAll:    rBadgesAll.data  || [],
+      seances:      rSeances.data    || [],
+      annonces:     rAnn.data        || [],
+      session:      rSess.data,
+    };
+
+    renderAll();
+  } catch (err) {
+    console.error('Erreur chargement :', err);
+    toast('Erreur lors du chargement des données', 'err');
+  }
+}
+
+/* ────────────────────────────────────────────────────
+   RENDU GLOBAL
+──────────────────────────────────────────────────── */
+function renderAll() {
+  renderSidebar();
+  renderDashboard();
+  renderCours();
+  renderProg();
+  renderBadges();
+}
+
+/* ────────────────────────────────────────────────────
+   SIDEBAR
+──────────────────────────────────────────────────── */
+function renderSidebar() {
+  const { profil, inscriptions, badgesUser, seances, session } = D;
+  const av = initials(profil.prenom, profil.nom);
+
+  ['sbAv','tbAv'].forEach(id => $$(id).textContent = av);
+  $$(  'sbName').textContent  = `${profil.prenom} ${profil.nom}`;
+  $$('sbLevel').textContent   = inscriptions[0]?.groupes?.formations?.titre || '–';
+  $$('nbCours').textContent   = inscriptions.length;
+  $$('nbBadges').textContent  = badgesUser.length;
+  if (session) $$('tbSess').textContent = session.nom;
+
+  const now       = new Date();
+  const prochaine = seances.find(s => s.statut === 'planifiee' && new Date(s.date_seance) >= now);
+
+  $$('sbNext').innerHTML = prochaine ? `
+    <div class="sn-lbl">Prochain cours</div>
+    <div class="sn-title">${prochaine.groupes?.formations?.titre || '–'}</div>
+    <div class="sn-time">${fdate(new Date(prochaine.date_seance))} · ${prochaine.heure_debut}</div>
+    ${prochaine.groupes?.lien_meet ? `<div class="sn-btn" onclick="window.open('${prochaine.groupes.lien_meet}','_blank')">📹 Rejoindre →</div>` : ''}
+  ` : '<div class="sn-lbl">Aucun cours à venir</div>';
+}
+
+/* ────────────────────────────────────────────────────
+   DASHBOARD
+──────────────────────────────────────────────────── */
+function renderDashboard() {
+  const { profil, inscriptions, seances, badgesUser, annonces, progression } = D;
+  const now = new Date();
+  const h   = now.getHours();
+
+  // Hero
+  const salut     = h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonne soirée';
+  const prochaine = seances.find(s => s.statut === 'planifiee' && new Date(s.date_seance) >= now);
+  const diff      = prochaine ? Math.ceil((new Date(prochaine.date_seance) - now) / 86400000) : null;
+
+  $$('hTag').textContent   = `${salut}, ${profil.prenom} 👋`;
+  $$('hTitle').textContent = diff !== null
+    ? `Votre prochain cours ${diff === 0 ? 'est aujourd\'hui !' : `est dans ${diff} jour${diff > 1 ? 's' : ''}`}`
+    : 'Bienvenue dans votre espace TILAWA';
+  $$('hSub').textContent   = `${inscriptions.length} formation${inscriptions.length > 1 ? 's' : ''} · ${badgesUser.length} badge${badgesUser.length > 1 ? 's' : ''} obtenu${badgesUser.length > 1 ? 's' : ''}`;
+
+  const meetBtn = $$('btnMeet');
+  if (prochaine?.groupes?.lien_meet) {
+    meetBtn.style.display = '';
+    meetBtn.onclick = () => window.open(prochaine.groupes.lien_meet, '_blank');
+  }
+
+  // KPIs
+  const faites  = seances.filter(s => s.statut === 'faite');
+  const total   = seances.filter(s => s.statut !== 'planifiee').length;
+  const taux    = total > 0 ? Math.round((faites.length / total) * 100) : 100;
+  $$('kInsc').textContent  = inscriptions.length;
+  $$('kHours').textContent = `${faites.length}h`;
+  $$('kBadges').textContent= badgesUser.length;
+  $$('kPres').textContent  = `${taux}%`;
+
+  // Cours en cours
+  const insc  = inscriptions.find(i => i.statut === 'actif') || inscriptions[0];
+  if (insc) {
+    const form     = insc.groupes.formations;
+    const prog     = progression.find(p => p.inscriptions?.groupe_id === insc.groupe_id);
+    const pct      = prog?.pourcentage || 0;
+    const sDuGroup = seances.filter(s => s.groupe_id === insc.groupe_id);
+    const sFaites  = sDuGroup.filter(s => s.statut === 'faite');
+    const sCur     = sDuGroup.find(s => s.statut === 'planifiee');
+    const sNext    = sDuGroup.filter(s => s.statut === 'planifiee')[1];
+    const catAr    = { tajwid:'تج', arabe:'أل', coran:'حف', grammaire:'نح' };
+
+    $$('ccCard').innerHTML = `
+      <div class="cc-head">
+        <div class="cc-ic">${catAr[form.categorie] || '◆'}</div>
+        <div style="flex:1">
+          <span class="eyebrow">Cours en cours</span>
+          <div class="cc-title">${form.titre}</div>
+          <div class="cc-meta">
+            <span>📅 ${insc.groupes.jour1 || '–'}${insc.groupes.jour2 ? ' & ' + insc.groupes.jour2 : ''}</span>
+            <span>🕐 ${insc.groupes.heure || '–'}</span>
+            <span>👥 ${insc.groupes.type}</span>
+          </div>
+        </div>
+      </div>
+      <div class="pr-row">
+        <span style="font-size:.74rem;color:var(--muted)">Progression · ${sFaites.length}/${sDuGroup.length} séances</span>
+        <span class="pr-pct">${Math.round(pct)}%</span>
+      </div>
+      <div class="pbar"><div class="pbar-f" style="width:${pct}%"></div></div>
+      ${prog?.note_bilan ? `
+        <div style="margin-top:12px;padding:10px 13px;background:var(--pale);border-radius:8px;border-left:3px solid var(--cobalt)">
+          <div style="font-size:.68rem;font-weight:600;color:var(--cobalt);margin-bottom:3px">💬 Note du professeur</div>
+          <div style="font-size:.77rem;color:var(--ink);font-style:italic;line-height:1.6">${prog.note_bilan}</div>
+        </div>` : ''}
+      <div class="lessons">
+        ${sFaites.slice(-2).map(s => `
+          <div class="ls-row done">
+            <div class="ls-dot ls-done">✓</div>
+            <div class="ls-num">${pad(s.numero)}</div>
+            <div class="ls-name">${s.titre || 'Séance ' + s.numero}</div>
+            <div class="ls-dur">1h</div>
+          </div>`).join('')}
+        ${sCur ? `
+          <div class="ls-row cur">
+            <div class="ls-dot ls-cur">▶</div>
+            <div class="ls-num" style="color:var(--cobalt)">${pad(sCur.numero)}</div>
+            <div class="ls-name">${sCur.titre || 'Prochaine séance'}</div>
+            <div class="ls-dur">1h</div>
+          </div>` : ''}
+        ${sNext ? `
+          <div class="ls-row">
+            <div class="ls-dot ls-next"></div>
+            <div class="ls-num">${pad(sNext.numero)}</div>
+            <div class="ls-name">${sNext.titre || 'Séance ' + sNext.numero}</div>
+            <div class="ls-dur">1h</div>
+          </div>` : ''}
+      </div>`;
+  } else {
+    $$('ccCard').innerHTML = `<div class="empty"><div class="empty-ic">📚</div>Aucun cours en cours<br><small>Contactez TILAWA pour vous inscrire</small></div>`;
+  }
+
+  // Séances
+  const proch5 = seances.filter(s => s.statut === 'planifiee').slice(0, 4);
+  $$('seCard').innerHTML = `
+    <span class="eyebrow">Prochaines séances</span>
+    <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:12px">Planning de la session</div>
+    ${proch5.length ? proch5.map((s, i) => `
+      <div class="se-row">
+        <div class="se-dot" style="background:${i === 0 ? 'var(--cobalt)' : 'var(--border)'}${i === 0 ? ';box-shadow:0 0 0 3px rgba(26,79,175,.15)' : ''}"></div>
+        <div class="se-day">${fdate(new Date(s.date_seance))}</div>
+        <div class="se-info">${s.heure_debut} · ${s.titre || s.groupes?.formations?.titre || '–'}</div>
+        <span class="se-tag" style="background:${i === 0 ? 'var(--pale)' : 'var(--surface)'};color:${i === 0 ? 'var(--cobalt)' : 'var(--muted)'}">
+          ${i === 0 ? 'Prochain' : fdateshort(new Date(s.date_seance))}
+        </span>
+      </div>`).join('')
+    : '<div class="empty" style="padding:14px 0">Aucune séance à venir</div>'}`;
+
+  // Annonce
+  const ann = annonces[0];
+  $$('annCard').innerHTML = ann ? `
+    <div class="ann">
+      <div class="ann-lbl">📣 ${ann.profils?.prenom || ''} ${ann.profils?.nom || ''}</div>
+      <div class="ann-title">${ann.titre}</div>
+      <div class="ann-body">${ann.contenu}</div>
+      <div class="ann-meta">${fdatefull(new Date(ann.publiee_le))}</div>
+    </div>` : '';
+}
+
+/* ────────────────────────────────────────────────────
+   MES COURS
+──────────────────────────────────────────────────── */
+const CAT = {
+  tajwid:    { emoji:'🎙', label:'Tajwid',         ar:'تَجْوِيد', grad:'linear-gradient(135deg,#1A4FAF,#2D7DD2)', bg:'#EEF2FF', color:'#3730A3' },
+  arabe:     { emoji:'📖', label:'Alphabétisation', ar:'أَلِف',   grad:'linear-gradient(135deg,#0D1B3E,#1A4FAF)', bg:'#EBF4FD', color:'#1A4FAF' },
+  coran:     { emoji:'🧠', label:'Mémorisation',    ar:'حِفْظ',   grad:'linear-gradient(135deg,#2D7DD2,#3AB5E5)', bg:'#FFF7ED', color:'#9A3412' },
+  grammaire: { emoji:'✏️', label:'Grammaire',       ar:'نَحْو',   grad:'linear-gradient(135deg,#0D2B50,#1A6B8A)', bg:'#F0FDF4', color:'#166534' },
+};
+
+function renderCours(filtre = 'all') {
+  const { inscriptions, progression, seances } = D;
+  $$('coursSub').textContent = `Session en cours · ${inscriptions.length} formation${inscriptions.length > 1 ? 's' : ''} inscrite${inscriptions.length > 1 ? 's' : ''}`;
+
+  const filtered = filtre === 'all' ? inscriptions : inscriptions.filter(i => i.statut === filtre);
+
+  $$('coursGrid').innerHTML = filtered.length ? filtered.map(insc => {
+    const form  = insc.groupes.formations;
+    const prog  = progression.find(p => p.inscriptions?.groupe_id === insc.groupe_id);
+    const pct   = prog?.pourcentage || 0;
+    const c     = CAT[form.categorie] || CAT.arabe;
+    const done  = insc.statut === 'termine';
+
+    return `
+      <div class="card fc">
+        <div class="fc-thumb" style="background:${c.grad}">
+          <div class="fc-ar">${c.ar}</div>
+          <span class="fc-level">${form.niveau}</span>
+          <span class="fc-status">${done ? '✓ Terminé' : '● Actif'}</span>
+        </div>
+        <div class="fc-body">
+          <span class="tag" style="background:${c.bg};color:${c.color}">${c.emoji} ${c.label}</span>
+          <div class="fc-title">${form.titre}</div>
+          ${form.description ? `<div class="fc-desc">${form.description}</div>` : ''}
+          <div class="fc-stats">
+            <div><div class="fc-stat-v">${form.duree_heures}h</div><div class="fc-stat-k">durée</div></div>
+            <div><div class="fc-stat-v">${insc.groupes.type}</div><div class="fc-stat-k">format</div></div>
+            <div><div class="fc-stat-v" style="color:${insc.paiement_statut==='paye'?'var(--green)':'var(--gold)'}">${insc.paiement_statut==='paye'?'✓ Payé':'⏳ En attente'}</div><div class="fc-stat-k">paiement</div></div>
+          </div>
+          <div class="fc-pr-row">
+            <span style="color:var(--muted)">Progression</span>
+            <span style="font-weight:600;color:${done?'var(--green)':'var(--cobalt)'}">${Math.round(pct)}%${done?' ✓':''}</span>
+          </div>
+          <div class="pbar"><div class="pbar-f" style="width:${pct}%;${done?'background:var(--green)':''}"></div></div>
+          ${prog?.note_bilan ? `<div style="font-size:.74rem;color:var(--muted);margin-top:9px;font-style:italic;line-height:1.5">"${prog.note_bilan.slice(0,90)}${prog.note_bilan.length>90?'…':''}"</div>` : ''}
+          <div class="fc-cta">
+            <button class="btn-p" style="flex:1;justify-content:center">▶ ${done?'Revoir':'Reprendre'}</button>
+            ${insc.groupes.lien_meet ? `<button class="btn-o" onclick="window.open('${insc.groupes.lien_meet}','_blank')">📹</button>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('') : `<div class="empty" style="grid-column:span 2"><div class="empty-ic">📭</div>Aucune formation dans cette catégorie</div>`;
+}
+
+function filterCours(btn, filtre) {
+  document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderCours(filtre);
+}
+
+/* ────────────────────────────────────────────────────
+   PROGRESSION
+──────────────────────────────────────────────────── */
+function renderProg() {
+  const { progression, seances, badgesUser } = D;
+  const moy  = progression.length ? Math.round(progression.reduce((a,p) => a + p.pourcentage, 0) / progression.length) : 0;
+  const C    = 2 * Math.PI * 46;
+  const off  = C - (moy / 100) * C;
+  const faites = seances.filter(s => s.statut === 'faite');
+  const icons  = { tajwid:'🎙', arabe:'📖', coran:'🧠', grammaire:'✏️' };
+  const mbgs   = { tajwid:'#EEF2FF', arabe:'#EBF4FD', coran:'#FFF7ED', grammaire:'#F0FDF4' };
+
+  $$('progCard').innerHTML = `
+    <span class="eyebrow">Vue d'ensemble</span>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:16px">Progression globale</div>
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:18px;flex-wrap:wrap">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 108 108">
+          <defs><linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1A4FAF"/><stop offset="100%" stop-color="#3AB5E5"/>
+          </linearGradient></defs>
+          <circle class="r-track" cx="54" cy="54" r="46"/>
+          <circle class="r-fill"  cx="54" cy="54" r="46" stroke-dasharray="${C - off} ${off}"/>
+        </svg>
+        <div class="ring-txt"><div class="ring-pct">${moy}%</div><div class="ring-sub">global</div></div>
+      </div>
+      <div>
+        <div style="font-size:2rem;font-weight:700;color:var(--ink);line-height:1">${faites.length}h</div>
+        <div style="font-size:.74rem;color:var(--muted);margin-bottom:10px">séances suivies</div>
+        <div style="font-size:1.1rem;font-weight:700;color:var(--ink)">${badgesUser.length}</div>
+        <div style="font-size:.74rem;color:var(--muted)">badges obtenus</div>
+      </div>
+    </div>
+    <div style="font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Par formation</div>
+    ${progression.length ? progression.map(p => {
+      const cat  = p.inscriptions?.groupes?.formations?.categorie || 'arabe';
+      const titre= p.inscriptions?.groupes?.formations?.titre || '–';
+      return `<div class="mod-row">
+        <div class="mod-ic" style="background:${mbgs[cat]||'#EBF4FD'}">${icons[cat]||'📚'}</div>
+        <div style="flex:1">
+          <div class="mod-name">${titre}</div>
+          <div class="pbar" style="height:4px;margin-top:4px"><div class="pbar-f" style="width:${p.pourcentage}%"></div></div>
+        </div>
+        <div class="mod-pct">${Math.round(p.pourcentage)}%</div>
+      </div>`;
+    }).join('') : '<div class="empty">Aucune progression enregistrée</div>'}`;
+
+  const notesProf = progression.filter(p => p.note_bilan || p.evaluation);
+  const evalL = { excellent:'Excellent', bien:'Bien', assez_bien:'Assez bien', a_ameliorer:'À améliorer' };
+  const evalC = { excellent:'var(--green)', bien:'var(--cobalt)', assez_bien:'var(--gold)', a_ameliorer:'var(--red)' };
+
+  $$('bilanCard').innerHTML = `
+    <span class="eyebrow">Notes des professeurs</span>
+    <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--ink);margin-bottom:14px">Bilan de session</div>
+    ${notesProf.length ? notesProf.map(p => `
+      <div class="bilan-item">
+        <div class="bi-head">
+          <div class="bi-form">${p.inscriptions?.groupes?.formations?.titre || '–'}</div>
+          ${p.evaluation ? `<span class="bi-eval" style="color:${evalC[p.evaluation]||'var(--cobalt)'}">${evalL[p.evaluation]||p.evaluation}</span>` : ''}
+        </div>
+        ${p.note_bilan ? `<div class="bi-note">"${p.note_bilan}"</div>` : ''}
+        <div class="bi-date">${fdatefull(new Date(p.mis_a_jour_le))}</div>
+      </div>`)
+    .join('') : '<div class="empty">Aucun bilan disponible</div>'}`;
+}
+
+/* ────────────────────────────────────────────────────
+   BADGES
+──────────────────────────────────────────────────── */
+function renderBadges() {
+  const { badgesUser, badgesAll } = D;
+  const obtained = new Set(badgesUser.map(b => b.badges.slug));
+  $$('badgesSub').textContent = `${badgesUser.length} badge${badgesUser.length > 1 ? 's' : ''} obtenu${badgesUser.length > 1 ? 's' : ''} sur ${badgesAll.length}`;
+
+  $$('bgGrid').innerHTML = badgesAll.map(b => {
+    const got = obtained.has(b.slug);
+    const ub  = badgesUser.find(u => u.badges.slug === b.slug);
+    return `
+      <div class="bg-card ${got ? '' : 'locked'}">
+        <div class="bg-ic">${b.icone}</div>
+        <div class="bg-name">${b.nom}</div>
+        <div class="bg-desc">${b.description || ''}</div>
+        ${got ? `<div class="bg-date">✓ ${fdatefull(new Date(ub.obtenu_le))}</div>` : '<div style="font-size:.62rem;color:var(--muted);margin-top:4px">🔒 À débloquer</div>'}
+      </div>`;
+  }).join('');
+}
+
+/* ────────────────────────────────────────────────────
+   NAVIGATION
+──────────────────────────────────────────────────── */
+const VIEW_TITLES = { dashboard:'Tableau de bord', cours:'Mes cours', prog:'Progression', badges:'Mes badges' };
+
+function go(id, el) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.getElementById('view-' + id).classList.add('on');
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  if (el) el.classList.add('on');
+  $$('tbTitle').textContent = VIEW_TITLES[id] || id;
+  document.querySelector('.content').scrollTop = 0;
+}
+
+/* ────────────────────────────────────────────────────
+   UTILITAIRES
+──────────────────────────────────────────────────── */
+const $$ = id => document.getElementById(id);
+
+function initials(p, n) { return ((p?.[0]||'') + (n?.[0]||'')).toUpperCase() || '?'; }
+function pad(n) { return String(n).padStart(2, '0'); }
+
+const JOURS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const MOIS  = ['jan','fév','mar','avr','mai','juin','juil','aoû','sep','oct','nov','déc'];
+function fdate(d)      { return `${JOURS[d.getDay()]} ${d.getDate()} ${MOIS[d.getMonth()]}`; }
+function fdateshort(d) { return `${d.getDate()}/${d.getMonth()+1}`; }
+function fdatefull(d)  { return `${d.getDate()} ${MOIS[d.getMonth()]} ${d.getFullYear()}`; }
+
+let _toastTimer;
+function toast(msg, type = 'info') {
+  document.querySelector('.toast')?.remove();
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${type==='ok'?'✓':type==='err'?'✗':'ℹ'}</span> ${msg}`;
+  document.body.appendChild(t);
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 300); }, 3200);
+}
+</script>
+</body>
+</html>

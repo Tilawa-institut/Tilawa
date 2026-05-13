@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TILAWA — Connexion</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts : Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // ── Tailwind config ───────────────────────────────────
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans:  ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+          },
+          colors: {
+            ink:    '#0D1B3E',
+            cobalt: '#1A4FAF',
+            mid:    '#2D7DD2',
+            cyan:   '#3AB5E5',
+            pale:   '#EBF4FD',
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+
+    /* Dégradé de fond */
+    .bg-tilawa {
+      background: linear-gradient(150deg, #0D1B3E 0%, #1A4FAF 55%, #2470C8 100%);
+    }
+
+    /* Dégradé sur le bouton */
+    .btn-grad {
+      background: linear-gradient(135deg, #1A4FAF, #3AB5E5);
+      transition: opacity .2s, transform .2s;
+    }
+    .btn-grad:hover  { opacity: .9; transform: translateY(-1px); }
+    .btn-grad:active { transform: translateY(0); }
+
+    /* Texte dégradé logo */
+    .text-grad {
+      background: linear-gradient(135deg, #1A4FAF, #3AB5E5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Animation d'entrée */
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.94) translateY(10px); }
+      to   { opacity: 1; transform: scale(1)   translateY(0); }
+    }
+    .pop-in { animation: popIn .35s cubic-bezier(.34,1.56,.64,1) both; }
+
+    /* Filigrane arabe */
+    .arabic-bg::before {
+      content: 'تِلَاوَة';
+      position: absolute;
+      font-family: 'Playfair Display', serif;
+      font-size: 220px;
+      color: rgba(255,255,255,.04);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body class="bg-tilawa min-h-screen flex items-center justify-center p-4 relative overflow-hidden arabic-bg">
+
+  <!-- Halo lumineux décoratif -->
+  <div class="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10"
+       style="background:radial-gradient(circle, #3AB5E5, transparent 70%); transform:translate(30%,-30%)"></div>
+  <div class="absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-10"
+       style="background:radial-gradient(circle, #1A4FAF, transparent 70%); transform:translate(-30%,30%)"></div>
+
+  <!-- Carte de connexion -->
+  <div class="pop-in bg-white rounded-2xl shadow-2xl w-full max-w-md px-10 py-10 relative z-10">
+
+    <!-- Logo -->
+    <div class="flex items-center justify-center gap-3 mb-8">
+      <!-- Icône SVG -->
+      <svg width="40" height="40" viewBox="0 0 36 36" fill="none">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%"   stop-color="#1A4FAF"/>
+            <stop offset="100%" stop-color="#3AB5E5"/>
+          </linearGradient>
+        </defs>
+        <path d="M6 25.5L18 18.5L30 25.5"               stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M6 25.5L11 31L18 27.5L25 31L30 25.5"   stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M18 7C18 7 10.5 10 8 15L8 25C11 20 18 17.5 18 17.5" stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M18 7C18 7 25.5 10 28 15L28 25C25 20 18 17.5 18 17.5" stroke="url(#lg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <line x1="18" y1="7" x2="18" y2="17.5" stroke="url(#lg)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="text-grad text-xl font-bold tracking-[.15em]">TILAWA</div>
+        <div class="text-xs text-gray-400 tracking-wide -mt-0.5">La lecture authentique</div>
+      </div>
+    </div>
+
+    <!-- Titre -->
+    <h1 class="font-serif text-2xl font-bold text-ink text-center mb-1">
+      Connexion à votre espace
+    </h1>
+    <p class="text-sm text-gray-500 text-center mb-8">
+      Accédez à vos cours et à votre progression
+    </p>
+
+    <!-- Message d'erreur -->
+    <div id="errorMsg"
+         class="hidden mb-5 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
+    </div>
+
+    <!-- Formulaire -->
+    <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label class="block text-sm font-semibold text-ink mb-1.5" for="email">
+          Adresse email
+        </label>
+        <input
+          id="email"
+          type="email"
+          placeholder="nadia@email.fr"
+          autocomplete="email"
+          required
+          class="w-full px-4 py-2.5 border-[1.5px] border-gray-200 rounded-xl text-sm text-ink
+                 placeholder:text-gray-400 focus:outline-none focus:border-cobalt transition-colors"
+        />
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-sm font-semibold text-ink" for="password">
+            Mot de passe
+          </label>
+          <a href="#" class="text-xs text-cobalt hover:underline">
+            Mot de passe oublié ?
+          </a>
+        </div>
+        <div class="relative">
+          <input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+            class="w-full px-4 py-2.5 border-[1.5px] border-gray-200 rounded-xl text-sm text-ink
+                   placeholder:text-gray-400 focus:outline-none focus:border-cobalt transition-colors pr-12"
+          />
+          <!-- Bouton afficher/masquer -->
+          <button
+            type="button"
+            onclick="togglePassword()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-lg leading-none"
+            id="eyeBtn"
+            tabindex="-1"
+            aria-label="Afficher le mot de passe"
+          >👁</button>
+        </div>
+      </div>
+
+      <!-- Bouton connexion -->
+      <button
+        id="submitBtn"
+        type="submit"
+        class="btn-grad w-full py-3 rounded-xl text-white font-semibold text-sm
+               flex items-center justify-center gap-2 shadow-lg shadow-cobalt/25"
+      >
+        <span id="submitTxt">Se connecter</span>
+        <!-- Spinner (masqué par défaut) -->
+        <svg id="spinner" class="hidden w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3"/>
+          <path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+    </form>
+
+    <!-- Séparateur -->
+    <div class="flex items-center gap-3 my-6">
+      <div class="flex-1 h-px bg-gray-100"></div>
+      <span class="text-xs text-gray-400">ou</span>
+      <div class="flex-1 h-px bg-gray-100"></div>
+    </div>
+
+    <!-- Contact WhatsApp -->
+    <a
+      href="https://api.whatsapp.com/send?phone=33782335866"
+      target="_blank"
+      class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border-[1.5px] border-gray-200
+             text-sm text-gray-600 font-medium hover:border-cobalt hover:text-cobalt hover:bg-pale transition-all"
+    >
+      💬 Besoin d'aide ? Contactez-nous
+    </a>
+
+    <!-- Lien retour -->
+    <p class="text-center text-xs text-gray-400 mt-6">
+      <a href="index.html" class="hover:text-cobalt transition-colors">← Retour à l'accueil</a>
+    </p>
+
+  </div><!-- /card -->
+
+</body>
+
+<script>
+  /* ════════════════════════════════════════════════════
+     ⚙️  CONFIG SUPABASE
+     Remplace les deux valeurs ci-dessous :
+     Supabase → Settings → API → Project URL + anon key
+  ════════════════════════════════════════════════════ */
+  const SUPABASE_URL = 'https://XXXXXXXX.supabase.co';   // ← REMPLACE
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6...'; // ← REMPLACE
+
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  /* ── Redirection si déjà connecté ───────────────── */
+  sb.auth.getSession().then(({ data: { session } }) => {
+    if (session) window.location.href = 'dashboard.html';
+  });
+
+  /* ── Connexion ───────────────────────────────────── */
+  async function handleLogin(e) {
+    e.preventDefault();
+
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const errEl    = document.getElementById('errorMsg');
+    const btn      = document.getElementById('submitBtn');
+    const txt      = document.getElementById('submitTxt');
+    const spin     = document.getElementById('spinner');
+
+    // Masquer l'erreur précédente
+    errEl.classList.add('hidden');
+    errEl.textContent = '';
+
+    // Validation basique
+    if (!email || !password) {
+      errEl.textContent = 'Veuillez remplir votre email et votre mot de passe.';
+      return errEl.classList.remove('hidden');
+    }
+
+    // État chargement
+    btn.disabled  = true;
+    txt.textContent = 'Connexion…';
+    spin.classList.remove('hidden');
+
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      // Remettre le bouton
+      btn.disabled = false;
+      txt.textContent = 'Se connecter';
+      spin.classList.add('hidden');
+
+      // Message d'erreur lisible
+      errEl.textContent = error.message.includes('Invalid login credentials')
+        ? 'Email ou mot de passe incorrect. Veuillez réessayer.'
+        : error.message.includes('Email not confirmed')
+        ? 'Veuillez confirmer votre email avant de vous connecter.'
+        : 'Une erreur est survenue. Veuillez réessayer.';
+
+      errEl.classList.remove('hidden');
+    } else {
+      // Succès → redirection vers le dashboard
+      txt.textContent = '✓ Connexion réussie…';
+      setTimeout(() => window.location.href = 'dashboard.html', 500);
+    }
+  }
+
+  /* ── Afficher / Masquer le mot de passe ─────────── */
+  function togglePassword() {
+    const input  = document.getElementById('password');
+    const btn    = document.getElementById('eyeBtn');
+    const isText = input.type === 'text';
+    input.type   = isText ? 'password' : 'text';
+    btn.textContent = isText ? '👁' : '🙈';
+  }
+
+  /* ── Connexion au Enter ──────────────────────────── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin(e);
+  });
+</script>
+</html>

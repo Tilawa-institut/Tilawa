@@ -1,0 +1,24 @@
+# Fichiers système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Variables d'environnement (ne jamais publier)
+.env
+.env.local
+.env.production
+
+# Node (si utilisé en local)
+node_modules/
+npm-debug.log
+
+# Données locales
+data/
+*.db
+*.sqlite

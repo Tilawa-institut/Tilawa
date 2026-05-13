@@ -1,0 +1,1486 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Institut TILAWA — La lecture authentique</title>
+<meta name="description" content="Apprenez le Coran, le tajwid, la langue arabe et les sciences islamiques en ligne. Petits groupes (max 4 élèves), professeurs qualifiés, dès 90€/20h."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',sans-serif;color:#0D1B3E;background:#fff;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:'Inter',sans-serif;border:none;background:none}
+
+/* ══════════════════════════════════════════════════
+   TOKENS
+══════════════════════════════════════════════════ */
+:root{
+  --ink:       #0D1B3E;   /* titres, texte fort */
+  --cobalt:    #1A4FAF;   /* bleu principal */
+  --mid:       #2D7DD2;   /* bleu moyen */
+  --cyan:      #3AB5E5;   /* bleu clair */
+  --pale:      #EBF4FD;   /* fond bleu très léger */
+  --muted:     #64748B;   /* texte secondaire */
+  --border:    #E4ECF7;   /* bordures */
+  --surface:   #F8FAFD;   /* surfaces neutres */
+  --gold:      #C8A84B;
+  --grad:      linear-gradient(135deg,#1A4FAF,#3AB5E5);
+  --grad-dark: linear-gradient(150deg,#0D1B3E 0%,#1A4FAF 60%,#2470C8 100%);
+  --r:10px; --r-lg:16px; --r-xl:24px;
+}
+
+/* ══════════════════════════════════════════════════
+   TYPE HELPERS
+══════════════════════════════════════════════════ */
+.serif{font-family:'Playfair Display',serif}
+.eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--cobalt)}
+.grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ══════════════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════════════ */
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+section{padding:88px 0}
+
+/* ══════════════════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:12px 24px;border-radius:var(--r);font-size:.88rem;font-weight:500;transition:all .2s;white-space:nowrap}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 18px rgba(26,79,175,.28)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(26,79,175,.38)}
+.btn-outline{color:var(--cobalt);border:1.5px solid var(--cobalt)}
+.btn-outline:hover{background:var(--pale)}
+.btn-white{background:#fff;color:var(--cobalt);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.btn-white:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(0,0,0,.16)}
+.btn-ghost{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.28)}
+.btn-ghost:hover{background:rgba(255,255,255,.22)}
+
+/* ══════════════════════════════════════════════════
+   ALERT BANNER
+══════════════════════════════════════════════════ */
+.alert-banner{background:#fff;border-bottom:1px solid var(--border);padding:9px 24px;text-align:center}
+.alert-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.alert-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;flex-shrink:0;animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.alert-text{font-size:.8rem;color:var(--muted)}
+.alert-text strong{color:var(--cobalt);font-weight:600}
+.alert-link{font-size:.8rem;font-weight:600;color:var(--cobalt);border-bottom:1px solid var(--pale)}
+
+/* ══════════════════════════════════════════════════
+   NAVBAR
+══════════════════════════════════════════════════ */
+nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1120px;margin:0 auto;padding:0 24px;height:66px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-logo-name{font-size:1.1rem;font-weight:700;letter-spacing:.15em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-logo-sub{font-size:.62rem;color:var(--muted);letter-spacing:.05em;margin-top:-1px}
+.nav-links{display:flex;align-items:center;gap:2px;list-style:none}
+.nav-links a{padding:7px 13px;border-radius:8px;font-size:.85rem;color:var(--muted);transition:all .15s}
+.nav-links a:hover{background:var(--pale);color:var(--cobalt)}
+.nav-links a.active{color:var(--cobalt);font-weight:500}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-session{font-size:.7rem;font-weight:600;color:var(--cobalt);background:var(--pale);padding:5px 11px;border-radius:20px}
+.hamburger{display:none}
+.mob-menu{display:none;position:fixed;top:66px;inset-x:0;background:#fff;border-bottom:1px solid var(--border);padding:16px 24px 24px;z-index:99}
+.mob-menu.open{display:block}
+.mob-menu li{list-style:none;border-bottom:1px solid var(--border)}
+.mob-menu a{display:block;padding:11px 0;font-size:.95rem;color:var(--muted)}
+.mob-menu .btn{margin-top:14px;width:100%;justify-content:center}
+
+/* ══════════════════════════════════════════════════
+   HERO  — fond sombre uniquement ici
+══════════════════════════════════════════════════ */
+.hero{background:var(--grad-dark);overflow:hidden;position:relative;min-height:90vh;display:flex;align-items:center}
+/* texture subtile */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle at 18% 60%,rgba(58,181,229,.12) 0%,transparent 55%),
+    radial-gradient(circle at 80% 20%,rgba(36,112,200,.18) 0%,transparent 45%);
+  pointer-events:none
+}
+.hero-inner{position:relative;z-index:1;width:100%;max-width:1120px;margin:0 auto;padding:80px 24px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.hero-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(58,181,229,.15);border:1px solid rgba(58,181,229,.3);border-radius:20px;padding:6px 14px;font-size:.72rem;font-weight:500;color:var(--cyan);letter-spacing:.04em;margin-bottom:22px}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,4.5vw,3.3rem);font-weight:700;color:#fff;line-height:1.1;letter-spacing:-.01em;margin-bottom:18px}
+.hero h1 em{font-style:italic;background:linear-gradient(135deg,#fff,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,.62);line-height:1.78;margin-bottom:32px;max-width:460px;font-weight:300}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+.hero-kpis{display:flex;gap:32px;padding-top:28px;border-top:1px solid rgba(255,255,255,.1);flex-wrap:wrap}
+.kpi-num{font-size:1.7rem;font-weight:700;color:#fff;line-height:1}
+.kpi-lbl{font-size:.72rem;color:rgba(255,255,255,.45);margin-top:4px}
+
+/* carte flottante hero */
+.hero-visual{display:flex;justify-content:center;align-items:center}
+.card-stack{position:relative;width:310px;height:380px}
+.card-bg{position:absolute;top:24px;right:-14px;width:260px;height:200px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:var(--r-lg)}
+.card-main{position:absolute;top:0;left:0;width:280px;background:#fff;border-radius:var(--r-lg);padding:22px;box-shadow:0 28px 64px rgba(0,0,0,.38);animation:float 6s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.card-badge{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--cobalt);background:var(--pale);padding:3px 9px;border-radius:10px;display:inline-block;margin-bottom:11px}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.3}
+.card-meta{font-size:.75rem;color:var(--muted);display:flex;gap:10px;margin-bottom:12px}
+.card-bar{height:4px;background:var(--border);border-radius:2px;margin-bottom:13px}
+.card-fill{height:100%;width:68%;background:var(--grad);border-radius:2px}
+.avatars{display:flex}
+.av{width:26px;height:26px;border-radius:50%;border:2px solid #fff;background:var(--pale);color:var(--cobalt);font-size:.58rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-left:-7px}
+.av:first-child{margin-left:0}
+.card-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.card-progress-txt{font-size:.72rem;color:var(--muted)}
+/* mini card */
+.card-mini{position:absolute;bottom:-10px;right:-10px;width:190px;background:#fff;border-radius:var(--r-lg);padding:14px 16px;box-shadow:0 16px 40px rgba(0,0,0,.22);display:flex;align-items:center;gap:12px}
+.card-mini-icon{width:38px;height:38px;background:var(--pale);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.card-mini-lbl{font-size:.7rem;color:var(--muted);margin-bottom:2px}
+.card-mini-val{font-size:1.05rem;font-weight:700;color:var(--ink)}
+
+/* ══════════════════════════════════════════════════
+   TRUST STRIP  — blanc avec icônes
+══════════════════════════════════════════════════ */
+.trust{background:#fff;border-bottom:1px solid var(--border);padding:20px 0}
+.trust-inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:9px;padding:8px 28px;font-size:.83rem;color:var(--muted)}
+.trust-item + .trust-item{border-left:1px solid var(--border)}
+.trust-icon{width:32px;height:32px;border-radius:8px;background:var(--pale);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.trust-label strong{display:block;font-size:.83rem;font-weight:600;color:var(--ink)}
+.trust-label span{font-size:.75rem;color:var(--muted)}
+
+/* ══════════════════════════════════════════════════
+   SECTION HEADER CENTRÉ
+══════════════════════════════════════════════════ */
+.sec-hd{text-align:center;margin-bottom:56px}
+.sec-hd .eyebrow{display:block;margin-bottom:12px}
+.sec-hd h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.4rem);font-weight:700;color:var(--ink);margin-bottom:12px}
+.sec-hd p{font-size:.95rem;color:var(--muted);max-width:520px;margin:0 auto;line-height:1.75}
+
+/* ══════════════════════════════════════════════════
+   FORMATIONS  — fond blanc pur
+══════════════════════════════════════════════════ */
+.formations{background:#fff}
+.formations-top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:52px}
+.formations-top-left h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.4rem);font-weight:700;color:var(--ink);margin-bottom:8px;line-height:1.2}
+.formations-top-left p{font-size:.9rem;color:var(--muted);max-width:500px;line-height:1.72}
+.f-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:20px}
+
+.f-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;transition:transform .22s,box-shadow .22s,border-color .22s;display:flex;flex-direction:column}
+.f-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(26,79,175,.1);border-color:var(--mid)}
+.f-thumb{height:108px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.f-thumb-ar{font-family:'Playfair Display',serif;font-size:42px;color:rgba(255,255,255,.2);user-select:none}
+.f-level{position:absolute;top:12px;left:12px;font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.18);color:#fff;padding:3px 9px;border-radius:9px;border:1px solid rgba(255,255,255,.2)}
+.f-body{padding:20px;flex:1;display:flex;flex-direction:column}
+.f-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:12px;font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:9px}
+.f-title{font-family:'Playfair Display',serif;font-size:1.08rem;font-weight:700;color:var(--ink);line-height:1.3;margin-bottom:8px}
+.f-desc{font-size:.83rem;color:var(--muted);line-height:1.67;flex:1;margin-bottom:16px}
+.f-info{display:flex;gap:16px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:14px}
+.f-info-item{}
+.f-info-val{font-size:.92rem;font-weight:600;color:var(--ink)}
+.f-info-key{font-size:.7rem;color:var(--muted);margin-top:1px}
+
+/* ══════════════════════════════════════════════════
+   MÉTHODE  — surface très légère
+══════════════════════════════════════════════════ */
+.methode{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.methode-inner{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.steps{display:flex;flex-direction:column}
+.step{display:flex;gap:18px;padding:22px 0;border-bottom:1px solid var(--border)}
+.step:last-child{border-bottom:none}
+.step-num{width:38px;height:38px;border-radius:50%;font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;background:var(--pale);color:var(--cobalt);transition:all .2s}
+.step:hover .step-num{background:var(--grad);color:#fff}
+.step-txt h3{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:5px}
+.step-txt p{font-size:.83rem;color:var(--muted);line-height:1.65}
+
+/* panneau infos session */
+.session-panel{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-xl);padding:32px;box-shadow:0 8px 32px rgba(26,79,175,.06)}
+.sp-head{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.sp-label{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--cobalt);margin-bottom:6px}
+.sp-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--ink);margin-bottom:3px}
+.sp-dates{font-size:.83rem;color:var(--muted)}
+.sp-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.sp-stat{background:var(--surface);border-radius:var(--r);padding:14px 16px}
+.sp-stat-num{font-size:1.45rem;font-weight:700;color:var(--cobalt);line-height:1}
+.sp-stat-lbl{font-size:.72rem;color:var(--muted);margin-top:3px;line-height:1.4}
+.sp-schedule{}
+.sp-sched-title{font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.sched-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.sched-row:last-child{border-bottom:none}
+.sched-dot{width:8px;height:8px;border-radius:50%;background:var(--grad);flex-shrink:0}
+.sched-day{font-size:.83rem;font-weight:500;color:var(--ink);width:90px;flex-shrink:0}
+.sched-time{font-size:.83rem;color:var(--muted);flex:1}
+.sched-type{font-size:.7rem;font-weight:600;color:var(--cobalt);background:var(--pale);padding:2px 9px;border-radius:10px}
+.sp-platform{margin-top:18px;display:flex;align-items:center;gap:10px;background:var(--pale);border-radius:var(--r);padding:12px 14px}
+.sp-platform-icon{font-size:20px}
+.sp-platform-txt strong{display:block;font-size:.83rem;font-weight:600;color:var(--ink)}
+.sp-platform-txt span{font-size:.75rem;color:var(--muted)}
+
+/* ══════════════════════════════════════════════════
+   TÉMOIGNAGES  — fond blanc
+══════════════════════════════════════════════════ */
+.temoignages{background:#fff}
+.t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.t-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:26px;display:flex;flex-direction:column;gap:16px;transition:border-color .2s,box-shadow .2s}
+.t-card:hover{border-color:var(--mid);box-shadow:0 8px 32px rgba(26,79,175,.07)}
+.t-card.highlight{background:var(--grad-dark);border:none}
+.t-stars{color:var(--gold);font-size:14px;letter-spacing:2px}
+.t-text{font-size:.87rem;color:var(--muted);line-height:1.75;font-style:italic;flex:1}
+.t-card.highlight .t-text{color:rgba(255,255,255,.7)}
+.t-author{display:flex;align-items:center;gap:10px}
+.t-av{width:38px;height:38px;border-radius:50%;background:var(--pale);color:var(--cobalt);font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.t-card.highlight .t-av{background:rgba(255,255,255,.15);color:#fff}
+.t-name{font-size:.88rem;font-weight:600;color:var(--ink)}
+.t-card.highlight .t-name{color:#fff}
+.t-role{font-size:.75rem;color:var(--muted)}
+.t-card.highlight .t-role{color:rgba(255,255,255,.45)}
+
+/* ══════════════════════════════════════════════════
+   TARIFS  — fond surface légère
+══════════════════════════════════════════════════ */
+.tarifs{background:var(--surface);border-top:1px solid var(--border)}
+.tarifs-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:680px;margin:0 auto}
+.tarif-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:30px;display:flex;flex-direction:column;gap:0}
+.tarif-card.featured{border:2px solid var(--cobalt);box-shadow:0 8px 32px rgba(26,79,175,.12)}
+.tarif-badge{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--pale);color:var(--cobalt);padding:4px 12px;border-radius:12px;display:inline-block;margin-bottom:16px}
+.tarif-name{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:8px}
+.tarif-price{font-size:2.4rem;font-weight:700;color:var(--cobalt);line-height:1;margin-bottom:3px}
+.tarif-price span{font-size:.85rem;font-weight:400;color:var(--muted)}
+.tarif-hourly{font-size:.8rem;color:var(--muted);margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.tarif-features{display:flex;flex-direction:column;gap:11px;margin-bottom:24px}
+.tarif-feature{display:flex;align-items:flex-start;gap:9px;font-size:.85rem;color:var(--muted);line-height:1.5}
+.t-check{color:var(--cobalt);font-size:15px;flex-shrink:0;margin-top:1px}
+.tarif-note{font-size:.8rem;font-weight:500;color:var(--cobalt);background:var(--pale);padding:8px 12px;border-radius:8px;margin-bottom:20px}
+
+/* ══════════════════════════════════════════════════
+   FAQ  — fond blanc
+══════════════════════════════════════════════════ */
+.faq{background:#fff}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.faq-item{border:1.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;transition:border-color .2s}
+.faq-item.open{border-color:var(--cobalt)}
+.faq-btn{width:100%;text-align:left;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;gap:14px;background:#fff;cursor:pointer}
+.faq-q{font-size:.9rem;font-weight:600;color:var(--ink);line-height:1.4}
+.faq-icon{width:22px;height:22px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--cobalt);flex-shrink:0;transition:transform .2s,background .2s}
+.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--cobalt);color:#fff;border-color:var(--cobalt)}
+.faq-answer{display:none;padding:0 20px 18px;font-size:.85rem;color:var(--muted);line-height:1.75}
+.faq-item.open .faq-btn{background:var(--surface)}
+.faq-item.open .faq-answer{display:block}
+
+/* ══════════════════════════════════════════════════
+   CTA FINAL  — seule autre section sombre
+══════════════════════════════════════════════════ */
+.cta{background:var(--grad-dark);text-align:center;padding:100px 0;position:relative;overflow:hidden}
+.cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 60%,rgba(58,181,229,.1) 0%,transparent 55%),radial-gradient(circle at 72% 35%,rgba(26,79,175,.18) 0%,transparent 50%);pointer-events:none}
+.cta-inner{position:relative;z-index:1}
+.cta-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(58,181,229,.15);border:1px solid rgba(58,181,229,.28);border-radius:20px;padding:6px 16px;font-size:.72rem;font-weight:500;color:var(--cyan);margin-bottom:24px}
+.cta h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;color:#fff;line-height:1.15;margin-bottom:14px}
+.cta-sub{font-size:1rem;color:rgba(255,255,255,.6);margin-bottom:32px;font-weight:300;line-height:1.7;max-width:480px;margin-left:auto;margin-right:auto}
+.cta-btns{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.cta-contacts{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+.cta-contact{display:flex;align-items:center;gap:6px;font-size:.8rem;color:rgba(255,255,255,.5);transition:color .2s}
+.cta-contact:hover{color:#fff}
+
+/* ══════════════════════════════════════════════════
+   FOOTER  — fond nuit
+══════════════════════════════════════════════════ */
+footer{background:var(--ink);padding:56px 0 28px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand .logo{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.footer-logo-name{font-size:1rem;font-weight:700;letter-spacing:.16em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-desc{font-size:.82rem;color:rgba(255,255,255,.42);line-height:1.7;margin-bottom:18px;max-width:240px}
+.socials{display:flex;gap:8px}
+.social-btn{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0}
+.social-btn:hover{background:rgba(255,255,255,.14)}
+.social-btn svg{width:15px;height:15px;fill:rgba(255,255,255,.6)}
+.footer-col h4{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.footer-col a{font-size:.85rem;color:rgba(255,255,255,.5);transition:color .15s}
+.footer-col a:hover{color:rgba(255,255,255,.9)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-copy{font-size:.75rem;color:rgba(255,255,255,.28)}
+.footer-legal{display:flex;gap:18px}
+.footer-legal a{font-size:.75rem;color:rgba(255,255,255,.28)}
+.footer-legal a:hover{color:rgba(255,255,255,.7)}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════ */
+@media(max-width:960px){
+  .hero-inner{grid-template-columns:1fr;gap:44px;text-align:center}
+  .hero-visual{display:none}
+  .hero-btns{justify-content:center}
+  .hero-kpis{justify-content:center}
+  .methode-inner{grid-template-columns:1fr}
+  .t-grid{grid-template-columns:1fr}
+  .tarifs-grid{grid-template-columns:1fr;max-width:380px}
+  .faq-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .nav-links,.nav-session{display:none}
+  .hamburger{display:flex;flex-direction:column;gap:5px;padding:6px}
+  .hamburger span{display:block;width:20px;height:2px;background:var(--ink);border-radius:2px;transition:all .25s}
+  .hamburger.is-open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  .hamburger.is-open span:nth-child(2){opacity:0;transform:scaleX(0)}
+  .hamburger.is-open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  .trust-item+.trust-item{border-left:none;border-top:1px solid var(--border)}
+  .trust-inner{flex-direction:column}
+  .formations-top{flex-direction:column}
+  .footer-grid{grid-template-columns:1fr}
+  section{padding:60px 0}
+  .contact-section{padding:60px 0}
+  .contact-grid{grid-template-columns:1fr;gap:32px}
+}
+
+/* ══════════════════════════════════════════════════
+   SECTION CONTACT
+══════════════════════════════════════════════════ */
+.contact-section{padding:88px 0;background:#fff;border-top:1px solid var(--border)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+
+.contact-info-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.7rem,3vw,2.3rem);font-weight:700;
+  color:var(--ink);line-height:1.2;margin-bottom:12px;
+}
+.contact-info-sub{font-size:.92rem;color:var(--muted);line-height:1.75;margin-bottom:28px}
+
+.contact-links{display:flex;flex-direction:column;gap:10px}
+.contact-link{
+  display:flex;align-items:center;gap:14px;padding:13px 16px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-lg);text-decoration:none;transition:all .2s;
+}
+.contact-link:hover{background:var(--pale);border-color:var(--cobalt);transform:translateX(3px)}
+.contact-link-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.contact-link-label{font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
+.contact-link-val{font-size:.88rem;font-weight:500;color:var(--ink)}
+
+.contact-form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);padding:28px 30px}
+.contact-form-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--ink);margin-bottom:4px}
+.contact-form-sub{font-size:.82rem;color:var(--muted);margin-bottom:20px}
+
+.cf-group{margin-bottom:14px}
+.cf-label{display:block;font-size:.78rem;font-weight:600;color:var(--ink);margin-bottom:5px}
+.cf-input,.cf-select{
+  width:100%;padding:10px 14px;border:1.5px solid var(--border);
+  border-radius:var(--r);font-size:.88rem;color:var(--ink);
+  background:#fff;font-family:'Inter',sans-serif;
+  outline:none;transition:border-color .15s;appearance:none;
+}
+.cf-input:focus,.cf-select:focus{border-color:var(--cobalt)}
+.cf-input::placeholder{color:var(--muted)}
+.cf-select-wrap{position:relative}
+.cf-select-wrap::after{content:'▾';position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:11px}
+
+.cf-submit{
+  width:100%;padding:12px;border-radius:var(--r);
+  background:var(--grad);color:#fff;font-size:.9rem;font-weight:600;
+  border:none;cursor:pointer;margin-top:4px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 18px rgba(26,79,175,.28);transition:all .2s;
+  font-family:'Inter',sans-serif;
+}
+.cf-submit:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(26,79,175,.38)}
+.cf-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.cf-success{display:none;text-align:center;padding:16px 0}
+.cf-success-icon{font-size:34px;margin-bottom:8px}
+.cf-success-title{font-size:.95rem;font-weight:600;color:var(--green);margin-bottom:3px}
+.cf-success-sub{font-size:.82rem;color:var(--muted)}
+
+/* Validation formulaire */
+.cf-input.is-error,.cf-select.is-error{border-color:var(--red);background:#FFF8F8}
+.cf-field-err{
+  display:none;font-size:.72rem;color:var(--red);
+  margin-top:4px;padding-left:2px;
+}
+.cf-field-err.show{display:block}
+.cf-global-err{
+  display:none;background:#FEF2F2;border:1px solid #FECACA;
+  border-radius:var(--r);padding:10px 14px;
+  font-size:.8rem;color:var(--red);margin-bottom:14px;
+}
+.cf-global-err.show{display:block}
+
+.wa-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:12px;border-radius:var(--r);
+  background:#25D366;color:#fff;font-size:.88rem;font-weight:600;
+  text-decoration:none;margin-top:10px;
+  transition:all .2s;box-shadow:0 4px 14px rgba(37,211,102,.25);
+}
+.wa-btn:hover{background:#1ebe5d;transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,211,102,.38)}
+</style>
+</head>
+<body>
+
+<!-- ─── ALERTE SESSION ────────────────────────────── -->
+<div class="alert-banner">
+  <div class="alert-inner">
+    <div class="alert-dot"></div>
+    <p class="alert-text"><strong>Session Avril – Juin 2026 ouverte.</strong> Les inscriptions sont en cours — places limitées.</p>
+    <a href="#contact" class="alert-link">Nous contacter →</a>
+  </div>
+</div>
+
+<!-- ─── NAVBAR ────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <!-- Logo -->
+    <a href="#" class="nav-logo">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <defs>
+          <linearGradient id="ng" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#1A4FAF"/>
+            <stop offset="100%" stop-color="#3AB5E5"/>
+          </linearGradient>
+        </defs>
+        <path d="M6 25.5L18 18.5L30 25.5" stroke="url(#ng)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M6 25.5L11 31L18 27.5L25 31L30 25.5" stroke="url(#ng)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <path d="M18 7C18 7 10.5 10 8 15L8 25C11 20 18 17.5 18 17.5" stroke="url(#ng)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M18 7C18 7 25.5 10 28 15L28 25C25 20 18 17.5 18 17.5" stroke="url(#ng)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <line x1="18" y1="7" x2="18" y2="17.5" stroke="url(#ng)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <div class="nav-logo-name">TILAWA</div>
+        <div style="font-size:.6rem;color:var(--muted);letter-spacing:.05em">La lecture authentique</div>
+      </div>
+    </a>
+
+    <!-- Liens -->
+    <ul class="nav-links">
+      <li><a href="#formations">Formations</a></li>
+      <li><a href="#methode">Méthode</a></li>
+      <li><a href="#tarifs">Tarifs</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <!-- CTA -->
+    <div class="nav-right">
+      <span class="nav-session">📅 Session avril 2026</span>
+      <a href="#contact" class="btn btn-primary" style="padding:10px 20px;font-size:.83rem">S'inscrire</a>
+    </div>
+
+    <!-- Mobile -->
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+<div class="mob-menu" id="mobMenu">
+  <ul>
+    <li><a href="#formations" onclick="toggleMenu()">Formations</a></li>
+    <li><a href="#methode" onclick="toggleMenu()">Méthode</a></li>
+    <li><a href="#tarifs" onclick="toggleMenu()">Tarifs</a></li>
+    <li><a href="#faq" onclick="toggleMenu()">FAQ</a></li>
+    <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
+  </ul>
+  <a href="#contact" onclick="toggleMenu()" class="btn btn-primary">S'inscrire maintenant →</a>
+</div>
+
+<!-- ─── HERO ──────────────────────────────────────── -->
+<section class="hero" id="home">
+  <div class="hero-inner">
+
+    <!-- Texte -->
+    <div>
+      <div class="hero-pill">
+        <svg width="7" height="7" viewBox="0 0 7 7"><circle cx="3.5" cy="3.5" r="3.5" fill="#3AB5E5"/></svg>
+        Inscriptions ouvertes — Session avril 2026
+      </div>
+      <h1>Apprends le Coran<br>avec <em>excellence</em></h1>
+      <p class="hero-sub">Cours en ligne en petits groupes (max 4 élèves) ou en individuel. Tajwid, alphabétisation, mémorisation et langue arabe — pour tous les âges, depuis chez vous.</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn btn-white">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="#1A4FAF" stroke-width="2" stroke-linecap="round"/></svg>
+          S'inscrire maintenant
+        </a>
+        <a href="#formations" class="btn btn-ghost">Voir les formations</a>
+      </div>
+      <div class="hero-kpis">
+        <div><div class="kpi-num">4</div><div class="kpi-lbl">élèves max / groupe</div></div>
+        <div><div class="kpi-num">4,50€</div><div class="kpi-lbl">l'heure (collectif)</div></div>
+        <div><div class="kpi-num">4</div><div class="kpi-lbl">formations disponibles</div></div>
+        <div><div class="kpi-num">100%</div><div class="kpi-lbl">en ligne</div></div>
+      </div>
+    </div>
+
+    <!-- Carte visuelle -->
+    <div class="hero-visual">
+      <div class="card-stack">
+        <div class="card-bg"></div>
+        <div class="card-main">
+          <div class="card-badge">Cours en cours</div>
+          <div class="card-title">Règles du tajwid — Niveau 2</div>
+          <div class="card-meta">
+            <span>📅 2 séances / sem.</span>
+            <span>⏱ 20h / session</span>
+          </div>
+          <div class="card-bar"><div class="card-fill"></div></div>
+          <div class="card-bottom">
+            <div class="avatars">
+              <div class="av">NB</div>
+              <div class="av">TY</div>
+              <div class="av">BS</div>
+              <div class="av" style="background:#EBF4FD;color:#1A4FAF;font-size:.55rem">+1</div>
+            </div>
+            <div class="card-progress-txt">68% complété</div>
+          </div>
+        </div>
+        <div class="card-mini">
+          <div class="card-mini-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M3 14.5L10 10L17 14.5M3 14.5L5.5 17L10 15L14.5 17L17 14.5M10 4.5C10 4.5 5.5 6.5 4 9.5V14C5.5 11 10 9.5 10 9.5M10 4.5C10 4.5 14.5 6.5 16 9.5V14C14.5 11 10 9.5 10 9.5M10 4.5V9.5" stroke="#1A4FAF" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div>
+            <div class="card-mini-lbl">Prochain cours</div>
+            <div class="card-mini-val">Lundi 19h00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── TRUST STRIP ───────────────────────────────── -->
+<div class="trust">
+  <div class="trust-inner">
+    <div class="trust-item">
+      <div class="trust-icon">📹</div>
+      <div class="trust-label"><strong>Via Google Meet</strong><span>Caméra & micro requis</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">👥</div>
+      <div class="trust-label"><strong>Max 4 élèves</strong><span>Par cours collectif</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">🕐</div>
+      <div class="trust-label"><strong>2 séances / semaine</strong><span>1h chacune</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">📅</div>
+      <div class="trust-label"><strong>4 sessions / an</strong><span>Sept · Déc · Mars · Juin</span></div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">👨‍👩‍👧</div>
+      <div class="trust-label"><strong>Tarifs familiaux</strong><span>Réductions disponibles</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FORMATIONS ────────────────────────────────── -->
+<section class="formations" id="formations">
+  <div class="wrap">
+    <div class="formations-top">
+      <div class="formations-top-left">
+        <div class="eyebrow" style="margin-bottom:10px">Nos formations</div>
+        <h2>Un parcours complet,<br>du premier alphabet à l'idjaza</h2>
+        <p>Chaque formation est structurée en niveaux progressifs de 20h chacun, enseignés par des professeurs qualifiés issus d'une tradition pédagogique rigoureuse.</p>
+      </div>
+      <a href="https://www.tilawa.fr/inscription" class="btn btn-outline">Voir toutes les formations</a>
+    </div>
+
+    <div class="f-grid">
+
+      <!-- Alphabétisation -->
+      <div class="f-card">
+        <div class="f-thumb" style="background:linear-gradient(135deg,#0D1B3E,#1A4FAF)">
+          <span class="f-thumb-ar">أَلِف</span>
+          <span class="f-level">Découverte</span>
+        </div>
+        <div class="f-body">
+          <span class="f-tag" style="background:#EBF4FD;color:#1A4FAF">📖 Alphabétisation</span>
+          <h3 class="f-title">Lire et écrire l'arabe</h3>
+          <p class="f-desc">Apprenez les lettres arabes, les voyelles et les syllabes depuis zéro. Une progression claire et bienveillante, aucun prérequis nécessaire.</p>
+          <div class="f-info">
+            <div class="f-info-item"><div class="f-info-val">20h</div><div class="f-info-key">par niveau</div></div>
+            <div class="f-info-item"><div class="f-info-val">2 niveaux</div><div class="f-info-key">disponibles</div></div>
+            <div class="f-info-item"><div class="f-info-val">Aucun</div><div class="f-info-key">prérequis</div></div>
+          </div>
+          <a href="#tarifs" class="btn btn-outline" style="width:100%;justify-content:center">Dès 90€ / 20h →</a>
+        </div>
+      </div>
+
+      <!-- Tajwid -->
+      <div class="f-card">
+        <div class="f-thumb" style="background:linear-gradient(135deg,#1A4FAF,#2D7DD2)">
+          <span class="f-thumb-ar">تَجْوِيد</span>
+          <span class="f-level">Consolidation</span>
+        </div>
+        <div class="f-body">
+          <span class="f-tag" style="background:#EEF2FF;color:#3730A3">🎙 Règles du tajwid</span>
+          <h3 class="f-title">Maîtriser la récitation du Coran</h3>
+          <p class="f-desc">Théorie et pratique des règles de tajwid. Apprenez à réciter le Coran correctement, avec les règles appliquées à votre lecture quotidienne.</p>
+          <div class="f-info">
+            <div class="f-info-item"><div class="f-info-val">20h</div><div class="f-info-key">par niveau</div></div>
+            <div class="f-info-item"><div class="f-info-val">3 niveaux</div><div class="f-info-key">disponibles</div></div>
+            <div class="f-info-item"><div class="f-info-val">Lire l'arabe</div><div class="f-info-key">prérequis</div></div>
+          </div>
+          <a href="#tarifs" class="btn btn-primary" style="width:100%;justify-content:center">Dès 90€ / 20h →</a>
+        </div>
+      </div>
+
+      <!-- Mémorisation -->
+      <div class="f-card">
+        <div class="f-thumb" style="background:linear-gradient(135deg,#2D7DD2,#3AB5E5)">
+          <span class="f-thumb-ar">حِفْظ</span>
+          <span class="f-level">Perfectionnement</span>
+        </div>
+        <div class="f-body">
+          <span class="f-tag" style="background:#FFF7ED;color:#9A3412">🧠 Mémorisation (Hifz)</span>
+          <h3 class="f-title">Mémoriser le Coran</h3>
+          <p class="f-desc">Mémorisez le Coran dans le respect des règles du tajwid. Formule idjaza disponible avec transmission de chaîne authentique jusqu'au Prophète ﷺ.</p>
+          <div class="f-info">
+            <div class="f-info-item"><div class="f-info-val">20h</div><div class="f-info-key">par niveau</div></div>
+            <div class="f-info-item"><div class="f-info-val">Individuel</div><div class="f-info-key">format</div></div>
+            <div class="f-info-item"><div class="f-info-val">Tajwid</div><div class="f-info-key">prérequis</div></div>
+          </div>
+          <a href="#tarifs" class="btn btn-outline" style="width:100%;justify-content:center">150€ / 20h →</a>
+        </div>
+      </div>
+
+      <!-- Grammaire -->
+      <div class="f-card">
+        <div class="f-thumb" style="background:linear-gradient(135deg,#0D2B50,#1A6B8A)">
+          <span class="f-thumb-ar">نَحْو</span>
+          <span class="f-level">Initiation</span>
+        </div>
+        <div class="f-body">
+          <span class="f-tag" style="background:#F0FDF4;color:#166534">✏️ Grammaire arabe</span>
+          <h3 class="f-title">Grammaire et conjugaison arabe</h3>
+          <p class="f-desc">Initiez-vous à la grammaire et à la conjugaison de l'arabe classique. Comprenez les structures grammaticales pour mieux lire et réciter le Coran.</p>
+          <div class="f-info">
+            <div class="f-info-item"><div class="f-info-val">20h</div><div class="f-info-key">durée</div></div>
+            <div class="f-info-item"><div class="f-info-val">1 niveau</div><div class="f-info-key">disponible</div></div>
+            <div class="f-info-item"><div class="f-info-val">Aucun</div><div class="f-info-key">prérequis</div></div>
+          </div>
+          <a href="#tarifs" class="btn btn-outline" style="width:100%;justify-content:center">Dès 90€ / 20h →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── MÉTHODE ───────────────────────────────────── -->
+<section class="methode" id="methode">
+  <div class="wrap">
+    <div class="methode-inner">
+
+      <!-- Étapes -->
+      <div>
+        <div class="eyebrow" style="margin-bottom:12px">Notre méthode</div>
+        <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.3rem);font-weight:700;color:var(--ink);margin-bottom:12px;line-height:1.2">Rigoureux, bienveillant<br>et personnalisé</h2>
+        <p style="font-size:.9rem;color:var(--muted);line-height:1.75;margin-bottom:36px;max-width:440px">Nous ne nous contentons pas d'enseigner le Coran — nous élevons chaque apprentissage vers l'excellence, avec une attention individuelle portée à chaque apprenant.</p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-txt">
+              <h3>Petit groupe, grand suivi</h3>
+              <p>4 élèves maximum par cours collectif. Chaque apprenant bénéficie d'une attention réelle du professeur à chaque séance.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-txt">
+              <h3>2 séances par semaine</h3>
+              <p>Un rythme régulier de 2 séances d'1h pour ancrer les apprentissages durablement, sans surcharge mentale.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-txt">
+              <h3>Sessions trimestrielles</h3>
+              <p>Des sessions de 3 mois avec un bilan final permettant de valider les acquis et définir le niveau suivant.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-txt">
+              <h3>Professeurs qualifiés</h3>
+              <p>Formateurs expérimentés, alliant rigueur académique et pédagogie bienveillante, issus d'une formation traditionnelle.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panneau session -->
+      <div class="session-panel">
+        <div class="sp-head">
+          <div class="sp-label">Session en cours</div>
+          <div class="sp-title">Session Avril – Juin 2026</div>
+          <div class="sp-dates">Début : 6 avril &nbsp;·&nbsp; Fin : 21 juin 2026</div>
+        </div>
+        <div class="sp-stats">
+          <div class="sp-stat">
+            <div class="sp-stat-num">20h</div>
+            <div class="sp-stat-lbl">de cours par session et par niveau</div>
+          </div>
+          <div class="sp-stat">
+            <div class="sp-stat-num">4 max</div>
+            <div class="sp-stat-lbl">élèves par groupe collectif</div>
+          </div>
+          <div class="sp-stat">
+            <div class="sp-stat-num">2×</div>
+            <div class="sp-stat-lbl">séances d'1h par semaine</div>
+          </div>
+          <div class="sp-stat">
+            <div class="sp-stat-num">4 /an</div>
+            <div class="sp-stat-lbl">sessions — sept, déc, mars, juin</div>
+          </div>
+        </div>
+        <div class="sp-schedule">
+          <div class="sp-sched-title">Créneaux disponibles</div>
+          <div class="sched-row">
+            <div class="sched-dot"></div>
+            <div class="sched-day">Lundi</div>
+            <div class="sched-time">Journée ou soirée</div>
+            <span class="sched-type">Collectif</span>
+          </div>
+          <div class="sched-row">
+            <div class="sched-dot"></div>
+            <div class="sched-day">Mardi</div>
+            <div class="sched-time">Journée ou soirée</div>
+            <span class="sched-type">Collectif</span>
+          </div>
+          <div class="sched-row">
+            <div class="sched-dot"></div>
+            <div class="sched-day">Mercredi</div>
+            <div class="sched-time">Sur demande</div>
+            <span class="sched-type">Individuel</span>
+          </div>
+          <div class="sched-row">
+            <div class="sched-dot"></div>
+            <div class="sched-day">Weekend</div>
+            <div class="sched-time">Horaires flexibles</div>
+            <span class="sched-type">Individuel</span>
+          </div>
+        </div>
+        <div class="sp-platform">
+          <span class="sp-platform-icon">📹</span>
+          <div class="sp-platform-txt">
+            <strong>Via Google Meet</strong>
+            <span>Caméra et micro requis — lien envoyé par email</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── TÉMOIGNAGES ───────────────────────────────── -->
+<section class="temoignages" id="temoignages">
+  <div class="wrap">
+    <div class="sec-hd">
+      <span class="eyebrow">Témoignages</span>
+      <h2>Ce qu'ils disent de TILAWA</h2>
+      <p>Depuis sa création, de nombreux apprenants nous ont fait confiance et témoignent de leur progression.</p>
+    </div>
+    <div class="t-grid">
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">« Grâce à l'Institut Tilawa, j'ai enfin pu apprendre à lire le Coran à mon rythme, depuis chez moi. Les professeurs sont patients et la méthode est très claire. Je recommande vivement ! »</p>
+        <div class="t-author">
+          <div class="t-av">NB</div>
+          <div>
+            <div class="t-name">Nadia B.</div>
+            <div class="t-role">Tajwid — niveau débutant</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-card highlight">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">« J'ai commencé par l'alphabétisation et je suis maintenant au tajwid. La progression est fluide et bien structurée. Un suivi vraiment personnalisé que je n'aurais pas trouvé ailleurs. »</p>
+        <div class="t-author">
+          <div class="t-av">TY</div>
+          <div>
+            <div class="t-name">Taieb Y.</div>
+            <div class="t-role">Parcours complet — alphabétisation → tajwid</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">« Excellent institut, des enseignants qualifiés et une méthode efficace. En deux sessions seulement, j'ai fait des progrès que je n'aurais jamais crus possibles. »</p>
+        <div class="t-author">
+          <div class="t-av">BS</div>
+          <div>
+            <div class="t-name">Bachir S.</div>
+            <div class="t-role">Mémorisation du Coran (Hifz)</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── TARIFS ────────────────────────────────────── -->
+<section class="tarifs" id="tarifs">
+  <div class="wrap">
+    <div class="sec-hd">
+      <span class="eyebrow">Tarifs</span>
+      <h2>Des tarifs accessibles pour tous</h2>
+      <p>Deux formules pour toutes les formations. Réductions familiales disponibles sur demande.</p>
+    </div>
+    <div class="tarifs-grid">
+
+      <div class="tarif-card">
+        <div class="tarif-name">Cours collectif</div>
+        <div class="tarif-price">90€ <span>/ 20h</span></div>
+        <div class="tarif-hourly">soit 4,50 € de l'heure</div>
+        <div class="tarif-features">
+          <div class="tarif-feature"><span class="t-check">✓</span>4 élèves maximum par groupe</div>
+          <div class="tarif-feature"><span class="t-check">✓</span>2 séances d'1h par semaine</div>
+          <div class="tarif-feature"><span class="t-check">✓</span>Via Google Meet</div>
+          <div class="tarif-feature"><span class="t-check">✓</span>Session de 3 mois</div>
+          <div class="tarif-feature"><span class="t-check">✓</span>Bilan trimestriel inclus</div>
+        </div>
+        <a href="#contact" class="btn btn-outline" style="width:100%;justify-content:center">Choisir le collectif</a>
+      </div>
+
+      <div class="tarif-card featured">
+        <div class="tarif-badge">Recommandé</div>
+        <div class="tarif-name">Cours individuel</div>
+        <div class="tarif-price">150€ <span>/ 20h</span></div>
+        <div class="tarif-hourly">soit 7,50 € de l'heure</div>
+        <div class="tarif-note">💙 Réductions familiales disponibles</div>
+        <div class="tarif-features">
+          <div class="tarif-feature"><span class="t-check">✓</span>Cours 1-pour-1 avec le professeur</div>
+          <div class="tarif-feature"><span class="t-check">✓</span>Horaires flexibles et adaptés</div>
+          <div class="tarif-feature"><span class="t-check">✓</span>Progression entièrement personnalisée</div>
+          <div class="tarif-feature"><span class="t-check">✓</span>Formule idjaza disponible</div>
+          <div class="tarif-feature"><span class="t-check">✓</span>Suivi individualisé renforcé</div>
+        </div>
+        <a href="#contact" class="btn btn-primary" style="width:100%;justify-content:center">Choisir l'individuel</a>
+      </div>
+
+    </div>
+    <p style="text-align:center;margin-top:22px;font-size:.83rem;color:var(--muted)">
+      Une question sur les tarifs ?
+      <a href="https://api.whatsapp.com/send?phone=33782335866" style="color:var(--cobalt);font-weight:500"> Contactez-nous sur WhatsApp →</a>
+    </p>
+  </div>
+</section>
+
+<!-- ─── FAQ ───────────────────────────────────────── -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="sec-hd">
+      <span class="eyebrow">Questions fréquentes</span>
+      <h2>Tout ce que vous devez savoir</h2>
+      <p>Vous ne trouvez pas la réponse ? Contactez-nous directement par WhatsApp ou par email.</p>
+    </div>
+    <div class="faq-grid">
+
+      <div class="faq-item open">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          <span class="faq-q">Quels sont les prérequis pour s'inscrire ?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Aucun prérequis pour les cours d'alphabétisation et de grammaire arabe. Pour le tajwid, il faut savoir lire et écrire l'arabe. Pour la mémorisation, la maîtrise du tajwid est nécessaire.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          <span class="faq-q">Comment se déroule une session de 3 mois ?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Chaque session dure environ 3 mois, avec 2 séances d'1h par semaine. À la fin, un bilan est réalisé pour valider les acquis et définir le niveau suivant. Vous cumulez ainsi 20h de cours par session.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          <span class="faq-q">Quels sont les horaires disponibles ?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Les cours sont dispensés en journée ou en soirée selon vos disponibilités. Des créneaux weekend sont disponibles pour les cours individuels. Nous nous adaptons au maximum à votre emploi du temps.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          <span class="faq-q">Qu'est-ce que la formule idjaza ?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">L'idjaza est une autorisation de transmission du Coran accordée par un maître à son élève après maîtrise complète. Elle permet de transmettre le Coran avec une chaîne d'autorisation authentique remontant jusqu'au Prophète ﷺ.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          <span class="faq-q">Y a-t-il des réductions familiales ?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">Oui, des réductions familiales sont disponibles. Contactez-nous directement par WhatsApp ou email pour connaître les modalités et obtenir un tarif personnalisé pour votre famille.</div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-btn" onclick="toggleFaq(this)">
+          <span class="faq-q">Combien puis-je mémoriser en deux sessions ?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-answer">En deux sessions (6 mois), vous pouvez mémoriser environ deux Hizb du Coran ou acquérir les bases solides de la lecture arabe, selon la formation choisie et votre régularité.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA FINAL ─────────────────────────────────── -->
+<section class="cta" id="inscription">
+  <div class="wrap">
+    <div class="cta-inner">
+      <div class="cta-pill">
+        <svg width="7" height="7" viewBox="0 0 7 7"><circle cx="3.5" cy="3.5" r="3.5" fill="#3AB5E5"/></svg>
+        Session avril – juin 2026 · Inscriptions ouvertes
+      </div>
+      <h2>Commencez votre parcours<br>dès aujourd'hui</h2>
+      <p class="cta-sub">Rejoignez l'Institut Tilawa et apprenez à lire le Coran avec une méthode éprouvée, depuis le confort de votre foyer.</p>
+      <div class="cta-btns">
+        <a href="#contact" class="btn btn-white">Nous contacter →</a>
+        <a href="https://wa.me/33782335866" target="_blank" class="btn btn-ghost">💬 WhatsApp</a>
+      </div>
+      <div class="cta-contacts">
+        <a href="mailto:contact@tilawa.fr" class="cta-contact">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M1 5L8 9.5L15 5" stroke="currentColor" stroke-width="1.5"/></svg>
+          contact@tilawa.fr
+        </a>
+        <a href="tel:+33782335866" class="cta-contact">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 2h3l1.5 4-2 1.2A9 9 0 008.8 11L10 9l4 1.5V14A2 2 0 0112 16C6.5 16 1 10.5 1 5a2 2 0 012-3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          +33 7 82 33 58 66
+        </a>
+        <a href="https://t.me/+AR6UdAQZKMpkY2Fk" class="cta-contact">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 8L14 2L10 14L7 9L2 8Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 9L10 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Telegram
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION CONTACT ────────────────────────────── -->
+<section class="contact-section" id="contact">
+  <div class="wrap">
+    <div class="contact-grid">
+
+      <!-- Colonne gauche : infos -->
+      <div>
+        <span class="eyebrow" style="margin-bottom:12px">Contact</span>
+        <h2 class="contact-info-title">Une question ?<br>Écrivez-nous.</h2>
+        <p class="contact-info-sub">
+          Notre équipe répond dans les 24h. Vous pouvez aussi nous contacter directement sur WhatsApp pour une réponse immédiate.
+        </p>
+
+        <div class="contact-links">
+
+          <a href="https://wa.me/33782335866" target="_blank" class="contact-link">
+            <div class="contact-link-icon" style="background:#E7FAF0">💬</div>
+            <div>
+              <div class="contact-link-label">WhatsApp</div>
+              <div class="contact-link-val">+33 7 82 33 58 66</div>
+            </div>
+          </a>
+
+          <a href="mailto:contact@tilawa.fr" class="contact-link">
+            <div class="contact-link-icon" style="background:var(--pale)">✉️</div>
+            <div>
+              <div class="contact-link-label">Email</div>
+              <div class="contact-link-val">contact@tilawa.fr</div>
+            </div>
+          </a>
+
+          <a href="https://instagram.com/tilawa_institut/" target="_blank" class="contact-link">
+            <div class="contact-link-icon" style="background:#FDF0F7">📸</div>
+            <div>
+              <div class="contact-link-label">Instagram</div>
+              <div class="contact-link-val">@tilawa_institut</div>
+            </div>
+          </a>
+
+          <a href="https://t.me/+AR6UdAQZKMpkY2Fk" target="_blank" class="contact-link">
+            <div class="contact-link-icon" style="background:#EEF6FD">✈️</div>
+            <div>
+              <div class="contact-link-label">Telegram</div>
+              <div class="contact-link-val">Rejoindre le groupe</div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Colonne droite : formulaire -->
+      <div class="contact-form-card">
+        <h3 class="contact-form-title">Demande d'inscription</h3>
+        <p class="contact-form-sub">Remplissez ce formulaire et nous vous recontactons rapidement.</p>
+
+        <!-- Formulaire -->
+        <form id="contactForm" onsubmit="handleContactForm(event)" novalidate>
+
+          <!-- Erreur globale -->
+          <div class="cf-global-err" id="cfGlobalErr"></div>
+
+          <div class="cf-group">
+            <label class="cf-label" for="cf-nom">Votre nom complet</label>
+            <input id="cf-nom" class="cf-input" type="text" placeholder="Nadia Benali"/>
+            <span class="cf-field-err" id="err-nom">Veuillez entrer votre nom.</span>
+          </div>
+
+          <div class="cf-group">
+            <label class="cf-label" for="cf-email">Adresse email</label>
+            <input id="cf-email" class="cf-input" type="email" placeholder="nadia@email.fr"/>
+            <span class="cf-field-err" id="err-email">Veuillez entrer un email valide.</span>
+          </div>
+
+          <div class="cf-group">
+            <label class="cf-label" for="cf-niveau">Votre niveau actuel</label>
+            <div class="cf-select-wrap">
+              <select id="cf-niveau" class="cf-select">
+                <option value="" disabled selected>Choisissez votre niveau</option>
+                <option value="debutant">Débutant — je ne connais pas l'alphabet arabe</option>
+                <option value="alphabetisation">Alphabétisation — je connais les lettres</option>
+                <option value="lecture">Lecture — je lis mais sans tajwid</option>
+                <option value="tajwid">Tajwid — je veux perfectionner ma récitation</option>
+                <option value="memorisation">Mémorisation — je veux mémoriser le Coran</option>
+              </select>
+            </div>
+            <span class="cf-field-err" id="err-niveau">Veuillez sélectionner votre niveau.</span>
+          </div>
+
+          <div class="cf-group">
+            <label class="cf-label" for="cf-message">Message (facultatif)</label>
+            <input id="cf-message" class="cf-input" type="text" placeholder="Vos disponibilités, questions…"/>
+          </div>
+
+          <button type="submit" class="cf-submit" id="cfSubmit">
+            <span id="cfSubmitTxt">Envoyer ma demande</span>
+            <svg id="cfSpinner" style="display:none;animation:spin .8s linear infinite" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" stroke-width="3"/>
+              <path d="M12 2a10 10 0 0 1 10 10" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </button>
+
+        </form>
+
+        <!-- Succès -->
+        <div class="cf-success" id="cfSuccess">
+          <div class="cf-success-icon">✅</div>
+          <div class="cf-success-title">Demande envoyée !</div>
+          <div class="cf-success-sub">Nous vous répondrons dans les 24h.<br>Pensez à vérifier vos spams.</div>
+        </div>
+
+        <!-- Séparateur -->
+        <div style="display:flex;align-items:center;gap:10px;margin-top:14px">
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <span style="font-size:.75rem;color:var(--muted)">ou directement</span>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+
+        <!-- Bouton WhatsApp direct -->
+        <a href="https://wa.me/33782335866?text=Bonjour%20TILAWA%2C%20je%20souhaite%20m%27inscrire%20%C3%A0%20une%20formation."
+           target="_blank"
+           class="wa-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Écrire sur WhatsApp
+        </a>
+
+      </div><!-- /contact-form-card -->
+    </div><!-- /contact-grid -->
+  </div><!-- /wrap -->
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────── -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <svg width="30" height="30" viewBox="0 0 36 36" fill="none">
+            <defs><linearGradient id="fg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#2D7DD2"/><stop offset="100%" stop-color="#3AB5E5"/></linearGradient></defs>
+            <path d="M6 25.5L18 18.5L30 25.5" stroke="url(#fg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            <path d="M6 25.5L11 31L18 27.5L25 31L30 25.5" stroke="url(#fg)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M18 7C18 7 10.5 10 8 15L8 25C11 20 18 17.5 18 17.5" stroke="url(#fg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            <path d="M18 7C18 7 25.5 10 28 15L28 25C25 20 18 17.5 18 17.5" stroke="url(#fg)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            <line x1="18" y1="7" x2="18" y2="17.5" stroke="url(#fg)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div class="footer-logo-name">TILAWA</div>
+        </a>
+        <p class="footer-desc">Institut islamique en ligne. Apprenez le Coran, le tajwid, la langue arabe et les sciences islamiques depuis chez vous, avec des professeurs qualifiés.</p>
+        <div class="socials">
+          <a href="https://instagram.com/tilawa_institut/" class="social-btn" aria-label="Instagram" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </a>
+          <a href="https://facebook.com/people/Institut-Tilawa/100080234476326/" class="social-btn" aria-label="Facebook" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <a href="https://api.whatsapp.com/send?phone=33782335866" class="social-btn" aria-label="WhatsApp" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+          <a href="https://t.me/+AR6UdAQZKMpkY2Fk" class="social-btn" aria-label="Telegram" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Formations</h4>
+        <ul>
+          <li><a href="#formations">Alphabétisation arabe</a></li>
+          <li><a href="#formations">Règles du tajwid</a></li>
+          <li><a href="#formations">Mémorisation (Hifz)</a></li>
+          <li><a href="#formations">Grammaire arabe</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Institut</h4>
+        <ul>
+          <li><a href="https://www.tilawa.fr/a-propos">À propos</a></li>
+          <li><a href="#methode">Notre méthode</a></li>
+          <li><a href="#temoignages">Témoignages</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="https://www.tilawa.fr/inscription">S'inscrire</a></li>
+          <li><a href="mailto:contact@tilawa.fr">contact@tilawa.fr</a></li>
+          <li><a href="tel:+33782335866">+33 7 82 33 58 66</a></li>
+          <li><a href="https://api.whatsapp.com/send?phone=33782335866">WhatsApp</a></li>
+          <li><a href="https://t.me/+AR6UdAQZKMpkY2Fk">Telegram</a></li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025–2026 Institut Tilawa. Tous droits réservés.</span>
+      <div class="footer-legal">
+        <a href="https://www.tilawa.fr/mentions-legales">Mentions légales</a>
+        <a href="https://www.tilawa.fr/contact">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  @keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+</style>
+
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════════════
+   TILAWA — Scripts interactifs v2
+   ─────────────────────────────────────────────────────
+   ① Menu hamburger mobile  (ouvrir / fermer / croix animée)
+   ② FAQ accordéon          (un seul item ouvert à la fois)
+   ③ Scroll fluide          (vers les sections + lien actif)
+   ④ Formulaire de contact  (validation inline + Formspree)
+══════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────
+   ①  MENU HAMBURGER MOBILE
+   ─────────────────────────────────────────────────────
+   Gère l'ouverture/fermeture du menu sur mobile.
+   Anime les 3 barres du bouton en croix (×) quand ouvert.
+   Ferme le menu si on clique en dehors.
+───────────────────────────────────────────────────── */
+function toggleMenu() {
+  var menu  = document.getElementById('mobMenu');
+  var btn   = document.querySelector('.hamburger');
+  var isNowOpen = menu.classList.toggle('open');      // bascule + retourne l'état
+  btn.classList.toggle('is-open', isNowOpen);          // anime les barres → ×
+  btn.setAttribute('aria-expanded', isNowOpen);
+}
+
+// Fermer si clic en dehors
+document.addEventListener('click', function (e) {
+  var menu = document.getElementById('mobMenu');
+  var btn  = document.querySelector('.hamburger');
+  if (!menu || !menu.classList.contains('open')) return;
+  if (!menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+    btn.classList.remove('is-open');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+});
+
+// Fermer si on repasse en desktop
+window.addEventListener('resize', function () {
+  if (window.innerWidth > 640) {
+    var menu = document.getElementById('mobMenu');
+    var btn  = document.querySelector('.hamburger');
+    if (menu) { menu.classList.remove('open'); }
+    if (btn)  { btn.classList.remove('is-open'); btn.setAttribute('aria-expanded', 'false'); }
+  }
+});
+
+
+/* ─────────────────────────────────────────────────────
+   ②  FAQ ACCORDÉON
+   ─────────────────────────────────────────────────────
+   Appelé par onclick="toggleFaq(this)" sur chaque bouton.
+   Un seul item peut être ouvert à la fois.
+   La classe .open sur .faq-item suffit pour tout le style
+   (CSS gère couleur, rotation de l'icône, affichage réponse).
+───────────────────────────────────────────────────── */
+function toggleFaq(btn) {
+  var item   = btn.closest('.faq-item');
+  var isOpen = item.classList.contains('open');
+
+  // Fermer TOUS les items ouverts
+  document.querySelectorAll('.faq-item.open').forEach(function (el) {
+    el.classList.remove('open');
+  });
+
+  // Si l'item cliqué était fermé → l'ouvrir
+  if (!isOpen) {
+    item.classList.add('open');
+
+    // Scroll vers la réponse si elle sort de l'écran
+    var answer = item.querySelector('.faq-answer');
+    if (answer) {
+      setTimeout(function () {
+        var rect = answer.getBoundingClientRect();
+        if (rect.bottom > window.innerHeight) {
+          answer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 50);
+    }
+  }
+}
+
+
+/* ─────────────────────────────────────────────────────
+   ③  SCROLL FLUIDE + LIEN ACTIF DANS LA NAV
+   ─────────────────────────────────────────────────────
+   Intercepte tous les liens <a href="#ancre"> de la page.
+   Calcule l'offset pour compenser la navbar sticky.
+   Met le lien correspondant en .active pendant le scroll.
+───────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', function () {
+
+  // Scroll fluide pour tous les liens internes
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var href = this.getAttribute('href');
+      if (href === '#' || href === '#!') return;        // href="#" → rien
+
+      var target = document.querySelector(href);
+      if (!target) return;
+
+      e.preventDefault();
+
+      var nav     = document.querySelector('nav');
+      var navH    = nav ? nav.offsetHeight : 0;
+      var top     = target.getBoundingClientRect().top + window.pageYOffset - navH - 16;
+
+      window.scrollTo({ top: top, behavior: 'smooth' });
+
+      // Fermer le menu mobile si ouvert
+      var menu = document.getElementById('mobMenu');
+      var btn  = document.querySelector('.hamburger');
+      if (menu) { menu.classList.remove('open'); }
+      if (btn)  { btn.classList.remove('is-open'); }
+    });
+  });
+
+  // Lien actif dans la nav
+  var navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  var sections = document.querySelectorAll('section[id], div[id]');
+  var navH     = (document.querySelector('nav') || {}).offsetHeight || 70;
+
+  function updateActiveLink() {
+    var scrollY    = window.pageYOffset;
+    var currentId  = '';
+
+    sections.forEach(function (section) {
+      if (scrollY >= section.offsetTop - navH - 50) {
+        currentId = section.id;
+      }
+    });
+
+    navLinks.forEach(function (a) {
+      var matches = a.getAttribute('href') === '#' + currentId;
+      a.classList.toggle('active', matches);
+    });
+  }
+
+  window.addEventListener('scroll', updateActiveLink, { passive: true });
+  updateActiveLink(); // appel initial
+});
+
+
+/* ─────────────────────────────────────────────────────
+   ④  FORMULAIRE DE CONTACT — Validation + Formspree
+   ─────────────────────────────────────────────────────
+
+   POUR ACTIVER L'ENVOI RÉEL PAR EMAIL :
+   ① Crée un compte gratuit sur https://formspree.io
+   ② Crée un formulaire → copie ton ID (ex: xpznwkqb)
+   ③ Remplace 'TON_ID_FORMSPREE' ci-dessous par ton ID
+   ④ Teste : tu recevras un email à chaque soumission
+
+   ▶ ASTUCE : Formspree gratuit = 50 soumissions/mois.
+     Plus de détails : https://formspree.io/plans
+───────────────────────────────────────────────────── */
+var FORMSPREE_ID = 'TON_ID_FORMSPREE'; // ← REMPLACE ICI (ex: 'xpznwkqb')
+
+function handleContactForm(e) {
+  e.preventDefault();
+
+  // ── Récupération des valeurs ───────────────────────
+  var nom     = document.getElementById('cf-nom').value.trim();
+  var email   = document.getElementById('cf-email').value.trim();
+  var niveau  = document.getElementById('cf-niveau').value;
+  var message = document.getElementById('cf-message').value.trim();
+
+  // ── Réinitialiser les erreurs ─────────────────────
+  resetErrors();
+
+  // ── Validation champ par champ ────────────────────
+  var hasError = false;
+
+  if (!nom) {
+    showFieldError('cf-nom', 'err-nom');
+    hasError = true;
+  }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showFieldError('cf-email', 'err-email');
+    if (!email) {
+      document.getElementById('err-email').textContent = 'Veuillez entrer votre email.';
+    } else {
+      document.getElementById('err-email').textContent = 'Format d\'email invalide.';
+    }
+    hasError = true;
+  }
+  if (!niveau) {
+    showFieldError('cf-niveau', 'err-niveau');
+    hasError = true;
+  }
+
+  if (hasError) return; // Arrêter si erreurs
+
+  // ── État chargement ────────────────────────────────
+  var btn     = document.getElementById('cfSubmit');
+  var txt     = document.getElementById('cfSubmitTxt');
+  var spinner = document.getElementById('cfSpinner');
+
+  btn.disabled              = true;
+  txt.textContent           = 'Envoi en cours…';
+  spinner.style.display     = 'block';
+
+  // ── Envoi vers Formspree ───────────────────────────
+  if (FORMSPREE_ID === 'TON_ID_FORMSPREE') {
+    // ⚠️ ID non configuré → fallback mailto
+    fallbackMailto(nom, email, niveau, message);
+    return;
+  }
+
+  fetch('https://formspree.io/f/' + FORMSPREE_ID, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body:    JSON.stringify({
+      nom:     nom,
+      email:   email,
+      niveau:  niveau,
+      message: message || '(aucun message)',
+      _subject: 'Nouvelle inscription TILAWA — ' + nom,
+    }),
+  })
+  .then(function (response) {
+    if (response.ok) {
+      showSuccess();
+    } else {
+      return response.json().then(function (data) {
+        throw new Error(data.error || 'Erreur serveur');
+      });
+    }
+  })
+  .catch(function (err) {
+    console.warn('Formspree error:', err);
+    // Si Formspree échoue → fallback WhatsApp
+    var errEl = document.getElementById('cfGlobalErr');
+    errEl.textContent = 'Envoi impossible. Contactez-nous directement sur WhatsApp →';
+    errEl.classList.add('show');
+    btn.disabled          = false;
+    txt.textContent       = 'Envoyer ma demande';
+    spinner.style.display = 'none';
+  });
+}
+
+// ── Afficher une erreur sur un champ ──────────────────
+function showFieldError(inputId, errId) {
+  var input = document.getElementById(inputId);
+  var err   = document.getElementById(errId);
+  if (input) input.classList.add('is-error');
+  if (err)   err.classList.add('show');
+}
+
+// ── Réinitialiser toutes les erreurs ──────────────────
+function resetErrors() {
+  document.querySelectorAll('.cf-input.is-error, .cf-select.is-error').forEach(function (el) {
+    el.classList.remove('is-error');
+  });
+  document.querySelectorAll('.cf-field-err.show').forEach(function (el) {
+    el.classList.remove('show');
+  });
+  var globalErr = document.getElementById('cfGlobalErr');
+  if (globalErr) globalErr.classList.remove('show');
+}
+
+// ── Effacer l'erreur d'un champ dès que l'utilisateur tape
+['cf-nom','cf-email','cf-niveau','cf-message'].forEach(function (id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', function () {
+    this.classList.remove('is-error');
+    var errId = 'err-' + id.replace('cf-', '');
+    var err = document.getElementById(errId);
+    if (err) err.classList.remove('show');
+  });
+});
+
+// ── Afficher le message de succès ─────────────────────
+function showSuccess() {
+  var form    = document.getElementById('contactForm');
+  var success = document.getElementById('cfSuccess');
+  if (form)    form.style.display    = 'none';
+  if (success) success.style.display = 'block';
+}
+
+// ── Fallback mailto (si Formspree non configuré) ──────
+function fallbackMailto(nom, email, niveau, message) {
+  var niveauLabels = {
+    debutant:       'Débutant',
+    alphabetisation:'Alphabétisation',
+    lecture:        'Lecture sans tajwid',
+    tajwid:         'Tajwid',
+    memorisation:   'Mémorisation',
+  };
+  var sujet = encodeURIComponent('Demande inscription TILAWA — ' + nom);
+  var corps = encodeURIComponent(
+    'Nom : '    + nom + '\r\n' +
+    'Email : '  + email + '\r\n' +
+    'Niveau : ' + (niveauLabels[niveau] || niveau) + '\r\n' +
+    (message ? 'Message : ' + message + '\r\n' : '') +
+    '\r\n— Formulaire tilawa.fr'
+  );
+  window.location.href = 'mailto:contact@tilawa.fr?subject=' + sujet + '&body=' + corps;
+  setTimeout(showSuccess, 1000); // afficher succès après ouverture du mail
+}
+</script>
+</body>
+</html>
